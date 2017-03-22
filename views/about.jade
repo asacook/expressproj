@@ -3,8 +3,3 @@ extends layout
 block content
   h1= title
   p Welcome to the #{title}
-  script.
-    var socket = io.connect('http://localhost:3000/about');
-    socket.on('connect', function(data) {
-      socket.emit('join', 'Hello World from client');
-    });

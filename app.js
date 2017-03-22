@@ -60,6 +60,21 @@ app.use(function(err, req, res, next) {
 
 var server = http.createServer(app);
 
+/**
+ * Socket.io connection
+ */
+var io = require('socket.io')(server);
+
+io.on('connection', function(client) {
+    console.log('Client connected...');
+
+    client.on('join', function(data) {
+        console.log(data);
+        client.emit('messages', 'Hello from server');
+    });
+
+});
+
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -70,16 +85,6 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 
-var io = require('socket.io')(server);
-
-io.on('connection', function(client) {
-    console.log('Client connected...');
-
-    client.on('join', function(data) {
-        console.log(data);
-    });
-
-});
 
 /**
  * Normalize a port into a number, string, or false.
