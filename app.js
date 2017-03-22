@@ -73,6 +73,10 @@ io.on('connection', function(client) {
         client.emit('messages', 'Hello from server');
     });
 
+    client.on('disconnect', function () {
+      console.log('A user disconnected');
+    });
+
 });
 
 
