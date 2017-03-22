@@ -2,4 +2,23 @@ extends layout
 
 block content
   h1= title
-  p= tweets
+  table.table 
+    thread
+      tr 
+        th TweetID 
+        th User
+        th Date
+        th Text
+        th Favorites
+        th Retweets
+    tbody
+      each tweet in tweets
+        tr 
+          td= tweet[0]
+          td= tweet[1]
+          td= tweet[2]
+          td= tweet[3]
+          td= tweet[4]
+          td= tweet[5]
+
+            
