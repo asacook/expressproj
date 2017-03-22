@@ -1,0 +1,27 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+    style.
+      body {
+      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+  body
+  .navbar.navbar-inverse.navbar-fixed-top
+      .navbar-inner
+        .container
+          button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.brand(href='/') Team 64
+          .nav-collapse.collapse
+            ul.nav
+              li.active
+                a(href='/') Search Tweets
+              li
+                a(href='/about') About
+          // /.nav-collapse
+    .container
+      block content
