@@ -2,6 +2,13 @@ extends layout
 
 block content
   h1= title
+  form.form-inline(role='form')
+    label.form-label(for'player_name') Player
+    input.form-input(type='text', name='player_input', id='player_name')
+    label.form-label(for='team_name') Team
+    input.form-input(type='text', name='team_input', id='team_name')
+    button.btn("Search")  
+      
   table.table 
     thread
       tr 
