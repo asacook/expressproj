@@ -1,7 +1,8 @@
 extends layout
-//- extends _bootstrap
+
 
 block content
+  link(href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous")
   script.
     var socket = io.connect('http://localhost:3000');
     socket.on('connect', function(data) {
@@ -10,10 +11,11 @@ block content
     socket.on('messages', function(data) {
                 alert(data);
     });
+    
+  
   
   body
     h1= title
-    
     .container
       .row
         .col-md-8

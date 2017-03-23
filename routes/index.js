@@ -10,7 +10,7 @@ access_token_secret: 'PN8f3atQ1vXoBuCojT9t8XcDC0tjlbbtMaw6bDGfNgvKw'
 });
 
 var query = 0;
-var params = {q: 'Rooney'};
+var params = {q: '#rooney'};
 
 /* GET home page. */
 router.get('/', twitterQueries);

@@ -5,6 +5,8 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
+  
+    
     script(src="/socket.io/socket.io.js")
     script(src='/bootstrap/js/bootstrap.min.js')
     //- script(src='https://ajax.goog')
@@ -14,18 +16,22 @@ html
       padding-top: 60px; 
       }
   body
-  .navbar.navbar-inverse.navbar-fixed-top
+    .navbar.navbar-inverse.navbar-fixed-top
       .navbar-inner
         .container
-          button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
-            span.icon-bar
-            span.icon-bar
-            span.icon-bar
-          a.brand(href='/') Team 64
-          .nav-collapse.collapse
-            ul.nav
+          .navbar-header
+            button.navbar-toggle(type="button", data-toggle="collapse", data-target=".navbar-collapse")
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.navbar-brand(href="/") Team 64
+          div(class="navbar-collapse collapse ")
+            ul(class="nav")
               li.active
-                a(href='/') Search Tweets
+                a(href="/") Home
               li
-                a(href='/about') About
-  block content
+                a(href="/about") About
+              li
+                a(href="#contact") Contact
+    
+    block content
