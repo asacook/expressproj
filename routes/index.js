@@ -9,10 +9,20 @@ access_token_key: '844220358416879618-A13Z7i481T2DcuSvCVFaVMgL3QHEkXe',
 access_token_secret: 'PN8f3atQ1vXoBuCojT9t8XcDC0tjlbbtMaw6bDGfNgvKw'
 });
 
+var query = 0;
+var params = {q: 'Rooney'};
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  var params = {q: 'mancity'};
-  client.get('search/tweets', params, getSearchTweets);
+router.get('/', twitterQueries);
+
+
+function twitterQueries(req, res, next) {
+  if(query == 0) {
+    client.get('search/tweets', params, getSearchTweets);
+  } else if (query == 1) {
+    client.get('users/serach', user_params, getUserTweets);
+  }
+
 
   function getSearchTweets(error, tweets, response) {
     if (!error) {
@@ -32,6 +42,19 @@ router.get('/', function(req, res, next) {
         res.status(500).json({ error: error });
     }
   };
-});
+
+  // function getUserTweets(error, user, response) {
+  //   if (!error) {
+  //     var user_tweets = []
+  //
+  //
+  //
+  //     res.status(200).render('index', {title: 'Search Tweets', tweets: user_tweets});
+  //   } else {
+  //       res.status(500).json({ error: error });
+  //   }
+  // };
+
+}
 
 module.exports = router;
