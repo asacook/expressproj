@@ -32,28 +32,22 @@ function twitterQueries(req, res, next) {
         res.status(500).json({ error: error });
     }
   };
-});
+};
 
 function getAllTweets(tweets){
-      var all_tweets = []
-      for (var i = 0; i < tweets.statuses.length; i++) {
-        var statuses = tweets.statuses[i];
-        var id = statuses.id;
-        var user = statuses.user.screen_name;
-        var time = statuses.created_at;
-        var text = statuses.text;
-        var retweets = statuses.retweet_count;
-        var favorites = statuses.favorite_count;
-        all_tweets.push([id,user,time,text,retweets,favorites])
-      }
-<<<<<<< HEAD
-      return all_tweets;
-=======
-      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets});
-    } else {
-        res.status(500).json({ error: error });
+    var all_tweets = []
+    for (var i = 0; i < tweets.statuses.length; i++) {
+      var statuses = tweets.statuses[i];
+      var id = statuses.id;
+      var user = statuses.user.screen_name;
+      var time = statuses.created_at;
+      var text = statuses.text;
+      var retweets = statuses.retweet_count;
+      var favorites = statuses.favorite_count;
+      all_tweets.push([id,user,time,text,retweets,favorites])
     }
-  };
+    return all_tweets;
+};
 
   // function getUserTweets(error, user, response) {
   //   if (!error) {
@@ -67,7 +61,6 @@ function getAllTweets(tweets){
   //   }
   // };
 
->>>>>>> origin/master
-}
+
 
 module.exports = router;
