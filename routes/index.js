@@ -16,6 +16,15 @@ router.get('/', function(req, res, next) {
 
   function getSearchTweets(error, tweets, response) {
     if (!error) {
+      var all_tweets = getAllTweets(tweets);
+      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets});
+    } else {
+        res.status(500).json({ error: error });
+    }
+  };
+});
+
+function getAllTweets(tweets){
       var all_tweets = []
       for (var i = 0; i < tweets.statuses.length; i++) {
         var statuses = tweets.statuses[i];
@@ -27,11 +36,7 @@ router.get('/', function(req, res, next) {
         var favorites = statuses.favorite_count;
         all_tweets.push([id,user,time,text,retweets,favorites])
       }
-      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets});
-    } else {
-        res.status(500).json({ error: error });
-    }
-  };
-});
+      return all_tweets;
+}
 
 module.exports = router;
