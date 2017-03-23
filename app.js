@@ -70,7 +70,7 @@ io.on('connection', function(client) {
 
     client.on('join', function(data) {
         console.log(data);
-        client.emit('messages', 'Hello from server');
+        // client.emit('messages', 'Hello from server');
     });
 
     client.on('disconnect', function () {

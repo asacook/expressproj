@@ -1,4 +1,5 @@
 extends layout
+//- extends _bootstrap
 
 block content
   script.
@@ -10,31 +11,44 @@ block content
                 alert(data);
     });
   
-  h1= title
-  form.form-inline(role='form')
-    label.form-label(for'player_name') Player
-    input.form-input(type='text', name='player_input', id='player_name')
-    label.form-label(for='team_name') Team
-    input.form-input(type='text', name='team_input', id='team_name')
-    button.btn.btn-success(type='submit') Search 
-      
-  table.table 
-    thread
-      tr 
-        th TweetID 
-        th User
-        th Date
-        th Text
-        th Favorites
-        th Retweets
-    tbody
-      each tweet in tweets
+  body
+    h1= title
+    
+    .container
+      .row
+        .col-md-8
+            form.form-inline(role='form')
+              label.form-label(for'player_name') Player
+              input.form-input(type='text', name='player_input', id='player_name')
+              label.form-label(for='team_name') Team
+              input.form-input(type='text', name='team_input', id='team_name')
+              button.btn.btn-success(type='submit') Search 
+          .col-md-4
+              form.radio-inline
+                label.radio-inline 
+                  input(type='radio', name='optradio', value='query_all') 
+                  Query Online
+                label.radio-inline 
+                  input(type='radio', name='optradio', value='query_db') 
+                  Query Database Only
+        
+    table.table 
+      thread
         tr 
-          td= tweet[0]
-          td= tweet[1]
-          td= tweet[2]
-          td= tweet[3]
-          td= tweet[4]
-          td= tweet[5]
+          th TweetID 
+          th User
+          th Date
+          th Text
+          th Favorites
+          th Retweets
+      tbody
+        each tweet in tweets
+          tr 
+            td= tweet[0]
+            td= tweet[1]
+            td= tweet[2]
+            td= tweet[3]
+            td= tweet[4]
+            td= tweet[5]
 
-            
+              

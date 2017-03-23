@@ -6,10 +6,12 @@ html
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/bootstrap-responsive.min.css')
     script(src="/socket.io/socket.io.js")
+    script(src='/bootstrap/js/bootstrap.min.js')
+    //- script(src='https://ajax.goog')
 
     style.
       body {
-      padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      padding-top: 60px; 
       }
   body
   .navbar.navbar-inverse.navbar-fixed-top
@@ -26,6 +28,4 @@ html
                 a(href='/') Search Tweets
               li
                 a(href='/about') About
-          // /.nav-collapse
-    .container
-      block content
+  block content
