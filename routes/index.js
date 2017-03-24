@@ -34,7 +34,7 @@ function twitterQueries(req, res, next) {
     if (!error) {
       var all_tweets = getAllTweets(tweets);
       // console.log(all_tweets)
-      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets});
+      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets, chartData1: [12, 19, 3, 17, 6, 3, 7], chartData2: [2, 29, 5, 5, 2, 3, 10]});
     } else {
         res.status(500).json({ error: error });
     }
