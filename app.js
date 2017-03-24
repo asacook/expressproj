@@ -81,12 +81,6 @@ io.on('connection', function(client) {
 });
 
 
-// app.get('/',function(req,res){
-//   res.sendfile("/views/index.jade");
-// });
-
-
-
 /**
  * Listen on provided port, on all network interfaces.
  */
