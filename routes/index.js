@@ -33,6 +33,7 @@ function twitterQueries(req, res, next) {
   function getSearchTweets(error, tweets, response) {
     if (!error) {
       var all_tweets = getAllTweets(tweets);
+      // console.log(all_tweets)
       res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets});
     } else {
         res.status(500).json({ error: error });
@@ -41,19 +42,35 @@ function twitterQueries(req, res, next) {
 };
 
 function getAllTweets(tweets){
+  console.log(tweets.statuses)
     var all_tweets = []
     for (var i = 0; i < tweets.statuses.length; i++) {
-      var statuses = tweets.statuses[i];
-      var id = statuses.id;
-      var user = statuses.user.screen_name;
-      var time = statuses.created_at;
-      var text = statuses.text;
-      var retweets = statuses.retweet_count;
-      var favorites = statuses.favorite_count;
-      all_tweets.push([id,user,time,text,retweets,favorites])
+      var tweet = tweets.statuses[i];
+      var author = tweet.user.screen_name;
+      var text = tweet.text;
+      var date_and_time = getDateAndTime(tweet.created_at)
+      var time = date_and_time[0]
+      var date = date_and_time[1]
+      var url_message = "http://twitter.com/statuses/" + tweet.id_str
+      all_tweets.push([author, text, time, date, url_message])
     }
     return all_tweets;
 };
+
+function getDateAndTime(string_time) {
+  var date_separator = "-"
+  var comp = string_time.split(' ');
+  var day_week = comp[0];
+  var month = comp[1];
+  var day_num = comp[2];
+  var timestamp = comp[3];
+  var timezone = comp[4];
+  var year = comp[5];
+
+  var date = day_num + date_separator + month + date_separator + year;
+  var time = timestamp;
+  return [date,time];
+}
 
 
 

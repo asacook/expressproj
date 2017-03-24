@@ -2,11 +2,15 @@ extends layout
 
 
 block content
-  link(href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous")
+  
   script.
     var socket = io.connect('http://localhost:3000');
     socket.on('connect', function(data) {
-      socket.emit('join', 'Hello World from client');
+      //- socket.emit('join', 'Client Connected');
+      
+      client.on('disconnect', function () {
+        console.log('A user disconnected');
+      });
     });
     socket.on('messages', function(data) {
                 alert(data);
@@ -17,40 +21,40 @@ block content
   body
     h1= title
     .container
-      .row
-        .col-md-8
-            form.form-inline(role='form', action='/', method='POST')
-              label.form-label(for'player_name') Player
-              input.form-input(type='text', name='player_input', id='player_name')
-              label.form-label(for='team_name') Team
-              input.form-input(type='text', name='team_input', id='team_name')
-              button.btn.btn-success(type='submit') Search 
-          .col-md-4
-              form.radio-inline
-                label.radio-inline 
-                  input(type='radio', name='optradio', value='query_all') 
-                  Query Online
-                label.radio-inline 
-                  input(type='radio', name='optradio', value='query_db') 
-                  Query Database Only
+      form.form-inline(role='form', action='/', method='POST')
+        label.form-label(for'player_name') Player
+        input.form-input(type='text', name='player_input', id='player_name')
+        label.form-label(for='team_name') Team
+        input.form-input(type='text', name='team_input', id='team_name')
+        button.btn.btn-success(type='submit') Search 
+
+        .radio-form
+          form.radio-inline
+            label.radio-inline 
+              input(type='radio', name='optradio', value='query_all') 
+              Query Online
+            label.radio-inline 
+              input(type='radio', name='optradio', value='query_db') 
+              Query Database Only
         
     table.table 
       thread
         tr 
-          th TweetID 
           th User
-          th Date
           th Text
-          th Favorites
-          th Retweets
+          th Date
+          th Time
+          th Link
       tbody
         each tweet in tweets
           tr 
-            td= tweet[0]
+            td
+              a(href="http://twitter.com/"+tweet[0])= tweet[0]
             td= tweet[1]
             td= tweet[2]
             td= tweet[3]
-            td= tweet[4]
-            td= tweet[5]
+            td
+              a(href=tweet[4]) Link
+
 
               
