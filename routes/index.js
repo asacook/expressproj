@@ -26,7 +26,7 @@ function twitterQueries(req, res, next) {
   if(query == 0) {
     client.get('search/tweets', params, getSearchTweets);
   } else if (query == 1) {
-    client.get('users/serach', user_params, getUserTweets);
+    client.get('users/search', user_params, getUserTweets);
   }
 
 
@@ -71,7 +71,6 @@ function getDateAndTime(string_time) {
   var time = timestamp;
   return [date,time];
 }
-
 
 
   // function getUserTweets(error, user, response) {
