@@ -21,7 +21,6 @@ block content
   body
     h1= title
     .container
-<<<<<<< HEAD
       form.form-inline(role='form', action='/', method='POST')
         label.form-label(for'player_name') Player
         input.form-input(type='text', name='player_input', id='player_name')
@@ -37,24 +36,6 @@ block content
             label.radio-inline 
               input(type='radio', name='optradio', value='query_db') 
               Query Database Only
-        
-=======
-      .row
-        .col-md-8
-            form.form-inline(role='form', action='/', method='POST')
-              label.form-label(for'player_name') Player
-              input.form-input(type='text', name='player_input', id='player_name')
-              label.form-label(for='team_name') Team
-              input.form-input(type='text', name='team_input', id='team_name')
-              button.btn.btn-success(type='submit') Search 
-          .col-md-2
-              form.radio-inline
-                label.radio-inline 
-                  input(type='radio', name='optradio', value='query_all') 
-                  Query Online
-                label.radio-inline 
-                  input(type='radio', name='optradio', value='query_db') 
-                  Query Database Only
     
     div(style='width:400px; height:400px;')
       canvas#chartCanvas(width='100px', height='100px')
@@ -78,7 +59,6 @@ block content
           }
         });
 
->>>>>>> origin/master
     table.table 
       thread
         tr 
