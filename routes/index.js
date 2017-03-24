@@ -2,6 +2,7 @@ var express = require('express');
 var Twitter = require('twitter');
 var router = express.Router();
 
+
 var client = new Twitter({
 consumer_key: 'BhBDTS4urGoSYW2x3TD9xk939',
 consumer_secret: 'DmYGQRS3gjx7cIMZa54dobSWV1ShQgTpTnXVNE3RWFQpn0rqXj',
@@ -14,6 +15,11 @@ var params = {q: '#rooney'};
 
 /* GET home page. */
 router.get('/', twitterQueries);
+
+router.post('/', function(req,res) {
+  console.log(req.body);
+  res.send("recieved your request!");
+});
 
 
 function twitterQueries(req, res, next) {
@@ -48,6 +54,8 @@ function getAllTweets(tweets){
     }
     return all_tweets;
 };
+
+
 
   // function getUserTweets(error, user, response) {
   //   if (!error) {
