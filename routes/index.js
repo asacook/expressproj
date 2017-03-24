@@ -16,11 +16,17 @@ var params = {q: '#rooney'};
 /* GET home page. */
 router.get('/', twitterQueries);
 
-router.post('/', function(req,res) {
-  console.log(req.body);
-  res.send("recieved your request!");
-});
+// router.post('/', function(req,res) {
+//   console.log(req.body);
+//   res.send("recieved your request!");
+// });
 
+router.post('/', function(req,res,next) {
+  var pName = req.body.player_input;
+  console.log(pName);
+  params = {q: pName};
+  twitterQueries(req,res,next);
+});
 
 function twitterQueries(req, res, next) {
   if(query == 0) {
