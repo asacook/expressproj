@@ -12,22 +12,24 @@ access_token_secret: 'PN8f3atQ1vXoBuCojT9t8XcDC0tjlbbtMaw6bDGfNgvKw'
 
 var query = 0;
 var params = {q: '#rooney'};
+var user_params = {q: 'from:rooney'};
 
 /* GET home page. */
 router.get('/', twitterQueries);
 
 router.post('/', function(req,res,next) {
   var pName = req.body.player_input;
-  params = {q: pName};
+  if(req.body.radioUser == "user") {
+    params = {q: 'from:'+pName}
+  }else{
+    params = {q: pName};
+  }
   twitterQueries(req,res,next);
 });
 
 function twitterQueries(req, res, next) {
-  if(query == 0) {
-    client.get('search/tweets', params, getSearchTweets);
-  } else if (query == 1) {
-    client.get('users/search', user_params, getUserTweets);
-  }
+  client.get('search/tweets', params, getSearchTweets);
+
 
 
   function getSearchTweets(error, tweets, response) {
@@ -95,6 +97,9 @@ function getMonthNum(monthstring) {
   return ("JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(monthstring)/3 + 1);
 }
 
+<<<<<<< HEAD
+
+
   // function getUserTweets(error, user, response) {
   //   if (!error) {
   //     var user_tweets = []
@@ -109,4 +114,6 @@ function getMonthNum(monthstring) {
 
 
 
+=======
+>>>>>>> d6beeb467dcf4c887bcc103fee789a50f844531c
 module.exports = router;
