@@ -97,7 +97,6 @@ function getMonthNum(monthstring) {
   return ("JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(monthstring)/3 + 1);
 }
 
-<<<<<<< HEAD
 
 
   // function getUserTweets(error, user, response) {
@@ -113,7 +112,4 @@ function getMonthNum(monthstring) {
   // };
 
 
-
-=======
->>>>>>> d6beeb467dcf4c887bcc103fee789a50f844531c
 module.exports = router;
