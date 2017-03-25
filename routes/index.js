@@ -33,8 +33,27 @@ function twitterQueries(req, res, next) {
   function getSearchTweets(error, tweets, response) {
     if (!error) {
       var all_tweets = getAllTweets(tweets);
-      // console.log(all_tweets)
-      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets, chartData1: [12, 19, 3, 17, 6, 3, 7], chartData2: [2, 29, 5, 5, 2, 3, 10]});
+
+      //Get all dates
+      var tweetdates = [];
+      for (var i = 0; i < all_tweets.length; i++) {
+        tweetdates.push(Date.parse(JSON.stringify(all_tweets[i][3])));
+      }
+
+
+      //Find min and max dates
+      var minsofar = Date.now();
+      var maxsofar = new Date('January 1, 1990 00:00:00'); //Before Twitter existed...
+      for (var i = 0; i < tweetdates.length; i++){
+        if (tweetdates[i] < minsofar) {
+          minsofar = tweetdates[i];
+        }
+        if (tweetdates[i] > maxsofar) {
+          maxsofar = tweetdates[i];
+        }
+      }
+
+      res.status(200).render('index', {title: 'Search Tweets', tweets: all_tweets, dateMax: maxsofar, dateMin: minsofar, chartData1: [12, 19, 3, 17, 6, 3, 7], chartData2: [2, 29, 5, 5, 2, 3, 10]});
     } else {
         res.status(500).json({ error: error });
     }
@@ -42,15 +61,15 @@ function twitterQueries(req, res, next) {
 };
 
 function getAllTweets(tweets){
-  console.log(tweets.statuses)
+  //console.log(tweets.statuses)
     var all_tweets = []
     for (var i = 0; i < tweets.statuses.length; i++) {
       var tweet = tweets.statuses[i];
       var author = tweet.user.screen_name;
       var text = tweet.text;
       var date_and_time = getDateAndTime(tweet.created_at)
-      var time = date_and_time[0]
-      var date = date_and_time[1]
+      var date = date_and_time[0]
+      var time = date_and_time[1]
       var url_message = "http://twitter.com/statuses/" + tweet.id_str
       all_tweets.push([author, text, time, date, url_message])
     }
@@ -61,17 +80,20 @@ function getDateAndTime(string_time) {
   var date_separator = "-"
   var comp = string_time.split(' ');
   var day_week = comp[0];
-  var month = comp[1];
+  var month = getMonthNum(comp[1]);
   var day_num = comp[2];
   var timestamp = comp[3];
   var timezone = comp[4];
   var year = comp[5];
 
-  var date = day_num + date_separator + month + date_separator + year;
+  var date = year + date_separator + month + date_separator + day_num;
   var time = timestamp;
   return [date,time];
 }
 
+function getMonthNum(monthstring) {
+  return ("JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(monthstring)/3 + 1);
+}
 
   // function getUserTweets(error, user, response) {
   //   if (!error) {

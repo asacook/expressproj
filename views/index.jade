@@ -46,7 +46,7 @@ block content
         var myChart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+            labels: ['j', 'f', 'm', 'a', 'm', 'j', 'j', 'a', 's', 'o', 'n', 'd'],
             datasets: [{
               label: 'apples',
               data: [!{chartData1}],
@@ -57,11 +57,24 @@ block content
               backgroundColor: "rgba(255,153,0,0.4)"
             }]
           }
+          /*options: {
+            scales: {
+              yAxes: [{
+                ticks: {
+                    //max: !{dateMax},
+                    //min: !{dateMin},
+                    max: 1,
+                    min: 5,
+                    stepSize: 0.5
+                }
+              }]
+            }
+          }*/
         });
 
-    table.table 
+    table.table
       thread
-        tr 
+        tr
           th User
           th Text
           th Date
