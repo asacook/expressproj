@@ -4,16 +4,22 @@ extends layout
 block content
   
   script.
-    var socket = io.connect('http://localhost:3000');
-    socket.on('connect', function(data) {
-      //- socket.emit('join', 'Client Connected');
+    $(document).ready(function() {
+      var socket = io.connect('http://localhost:3000')
       
-      client.on('disconnect', function () {
-        console.log('A user disconnected');
-      });
-    });
-    socket.on('messages', function(data) {
-                alert(data);
+      socket.on('search tweets', function(data) {
+      var html = ''
+      for (var i = 0; i < data.length; i++) {
+        tweet = data[i]
+        html += 'tr \n' +
+                'td \n a(href="http://twitter.com/"' + tweet.user + ')= ' + tweet.user + '\n' +
+                'td= ' + tweet.text + '\n'
+                'td= ' + tweet.date + '\n'
+                'td= ' + tweet.time + '\n'
+                'td \n a(href="http://twitter.com/statuses/"' + tweet.tweet_id + ') Link \n'  
+      }
+      $('tweet-table').html(html)
+      })
     });
     
   
@@ -40,6 +46,27 @@ block content
               input(type='radio', name='radioUser', value='user')
               Search Tweets by User
     
+
+    table.table 
+      thread
+        tr 
+          th User
+          th Text
+          th Date
+          th Time
+          th Link
+      tbody(id="tweet-table")
+        each tweet in tweets
+          tr 
+            td
+              a(href="http://twitter.com/"+tweet.user)= tweet.user
+            td= tweet.text
+            td= tweet.date
+            td= tweet.time
+            td
+              a(href="http://twitter.com/statuses/" + tweet.tweet_id) Link
+
+
     div(style='width:400px; height:400px;')
       canvas#chartCanvas(width='100px', height='100px')
       script.
@@ -74,25 +101,3 @@ block content
             }
           }*/
         });
-
-    table.table
-      thread
-        tr
-          th User
-          th Text
-          th Date
-          th Time
-          th Link
-      tbody
-        each tweet in tweets
-          tr 
-            td
-              a(href="http://twitter.com/"+tweet[0])= tweet[0]
-            td= tweet[1]
-            td= tweet[2]
-            td= tweet[3]
-            td
-              a(href=tweet[4]) Link
-
-
-              

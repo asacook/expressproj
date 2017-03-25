@@ -66,6 +66,7 @@ var server = http.createServer(app);
  */
 var io = require('socket.io')(server);
 
+
 io.on('connection', function(client) {
     console.log('Client connected...');
 
@@ -88,6 +89,8 @@ io.on('connection', function(client) {
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+
 
 
 
