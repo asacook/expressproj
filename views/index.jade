@@ -73,10 +73,11 @@ block content
         var ctx = document.getElementById('chartCanvas').getContext('2d');
         ctx.canvas.width = 100;
         ctx.canvas.height = 100;
+        
         var myChart = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: ['j', 'f', 'm', 'a', 'm', 'j', 'j', 'a', 's', 'o', 'n', 'd'],
+            labels: [#{labels}],
             datasets: [{
               label: 'apples',
               data: [!{chartData1}],

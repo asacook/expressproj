@@ -66,21 +66,18 @@ function twitterQueries(req, res, next) {
           //Get all dates
           var tweetdates = [];
           for (var i = 0; i < tweet_data.length; i++) {
-            tweetdates.push(Date.parse(JSON.stringify(tweet_data[i].date)));
+            tweetdates.push(new Date(Date.parse(JSON.stringify(tweet_data[i].date))));
           }
 
-          //Find min and max dates
-         var minsofar = Date.now();
-         var maxsofar = new Date('January 1, 1990 00:00:00'); //Before Twitter existed...
-         for (var i = 0; i < tweetdates.length; i++){
-           if (tweetdates[i] < minsofar) {
-             minsofar = tweetdates[i];
-           }
-           if (tweetdates[i] > maxsofar) {
-             maxsofar = tweetdates[i];
-           }
-         }
-         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, dateMax: maxsofar, dateMin: minsofar, chartData1: [12, 19, 3, 17, 6, 3, 7], chartData2: [2, 29, 5, 5, 2, 3, 10]});
+         //Sort the list of dates to be used as chart labels
+         tweetdates.sort();
+         //Parse to strings
+
+         //for (var i = 0; i < tweetdates.length; i++) {
+           //tweetdates[i] = tweetdates[i].toDateString();
+         //}
+
+         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: tweetdates, chartData1: [12, 19, 3, 17, 6, 3, 7], chartData2: [2, 29, 5, 5, 2, 3, 10]});
        }
      });
     } else {
