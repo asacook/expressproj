@@ -32,6 +32,7 @@ db.connect();
 
 var query = 0;
 database_only = true;
+search_user = false
 var params = {q: '#rooney'};
 var user_params = {q: 'from:rooney'};
 
@@ -40,57 +41,80 @@ router.get('/', twitterQueries);
 
 router.post('/', function(req,res,next) {
   var pName = req.body.player_input;
+  var tName = req.body.team_input;
   if(req.body.radioUser == "user") {
-    params = {q: 'from:'+pName}
+    params = {q: 'from:'+ pName + " " + tName};
+    search_user = true;
   }else{
-    params = {q: pName};
+    params = {q: pName + " " + tName};
+    search_user = false;
+  }
+  if(req.body.querySelector == "query_all") {
+    database_only = false;
+  } else {
+    database_only = true;
   }
   twitterQueries(req,res,next);
 });
 
 function twitterQueries(req, res, next) {
   client.get('search/tweets', params, getSearchTweets);
+  var param_values = params.q.split(" ")
+  var player_name = param_values[0]
+  var team_name = param_values[1]
 
   function getSearchTweets(error, tweets, response) {
-    var all_tweets;
+    var tweet_results;
     if (!error) {
       if (!database_only) {
-        var queried_tweets = queryTweets(tweets, "Cristiano", "Santa Fe");
+        var queried_tweets = queryTweets(tweets, player_name, team_name);
         populateDatabase(queried_tweets)
       }
-      var tweet_results = getTweets("Cristiano", "Santa Fe", function(err, tweet_data) {
-        if (err) {
-          console.log("THERE WAS AN ERROR QUERYING THE DATABASE");
-        } else {
 
-          //Create graph data
-          var graphData = {};
-          for (var i = 0; i < tweet_data.length; i++) {
-            var key = new Date(Date.parse(JSON.stringify(tweet_data[i].date))).toDateString();
-            if (!(key in graphData)) {
-              graphData[key] = 1; //new date
-            } else {
-              graphData[key]++; //incremement count
-            }
-          }
+      if (search_user) {
+        var username = player_name.split(":")[1]
+        console.log(username)
+        tweet_results = getTweetsByUser(username, team_name, tweetQueryHandler);
+      } else {
+        tweet_results = getTweets(player_name, team_name, tweetQueryHandler);
+      }
 
-          //Return Object values in an array for Chart.js
-          var values = [];
-          for(key in graphData) {
-            if(graphData.hasOwnProperty(key)) {
-              values.push(graphData[key]);
-            }
-          }
-
-         //Render Jade file with attributes.
-         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
-       }
-     });
     } else {
         res.status(500).json({ error: error });
     }
   };
+
+  function tweetQueryHandler(err, tweet_data) {
+    if (err) {
+      console.log("THERE WAS AN ERROR QUERYING THE DATABASE");
+    } else {
+
+      //Create graph data
+      var graphData = {};
+      for (var i = 0; i < tweet_data.length; i++) {
+        var key = new Date(Date.parse(JSON.stringify(tweet_data[i].date))).toDateString();
+        if (!(key in graphData)) {
+          graphData[key] = 1; //new date
+        } else {
+          graphData[key]++; //incremement count
+        }
+      }
+
+      //Return Object values in an array for Chart.js
+      var values = [];
+      for(key in graphData) {
+        if(graphData.hasOwnProperty(key)) {
+          values.push(graphData[key]);
+        }
+      }
+
+     //Render Jade file with attributes.
+     res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
+   }
+  }
 };
+
+
 
 function queryTweets(tweets, player_name, team_name){
     var all_tweets = []
@@ -128,8 +152,8 @@ function getDateAndTime(string_time) {
   function populateDatabase(tweets) {
     tweet_list = dict2Array(tweets)
     for (var i = 0; i < tweet_list.length; i++) {
-      console.log(tweet_list[i])
-      db.query(ADD_ITEM_TO_DB, tweet_list[i], twitter_callbacks)
+      // console.log(tweet_list[i])
+      db.query(ADD_ITEM_TO_DB, tweet_list[i], twitterCallbacks)
     }
   }
 
@@ -142,6 +166,17 @@ function getDateAndTime(string_time) {
       }
       callback(null, all_results)
     });
+  }
+
+  function getTweetsByUser(user, team, callback) {
+    db.query(GET_BY_USER, user, function(error, results) {
+      var all_results = []
+      if (error) throw error;
+      for (var i = 0; i < results.length; i++) {
+        all_results.push(results[i]);
+      }
+      callback(null, all_results)
+     });
   }
 
   function twitterCallbacks(error, result, fields) {
