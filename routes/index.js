@@ -1,6 +1,7 @@
 var express = require('express');
 var Twitter = require('twitter');
 var mysql = require('mysql');
+var env = require('../ENV.js')
 var io = require('../app').io;
 var router = express.Router();
 
@@ -9,22 +10,21 @@ const GET_PLAYER_TEAM = "SELECT player,team,tweet_id,user,date,time,text FROM fo
 const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE user = ?"
 const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?);"
 
-
 var db = mysql.createConnection(
     {
       host     : 'stusql.dcs.shef.ac.uk',
       port     : '3306',
-      user     : 'team064',
-      password : 'ec4c7a0d',
-      database : 'team064'
+      user     : process.env.DB_USER,
+      password : process.env.DB_PASS,
+      database : process.env.DB_NAME
     }
 );
 
 var client = new Twitter({
-consumer_key: 'BhBDTS4urGoSYW2x3TD9xk939',
-consumer_secret: 'DmYGQRS3gjx7cIMZa54dobSWV1ShQgTpTnXVNE3RWFQpn0rqXj',
-access_token_key: '844220358416879618-A13Z7i481T2DcuSvCVFaVMgL3QHEkXe',
-access_token_secret: 'PN8f3atQ1vXoBuCojT9t8XcDC0tjlbbtMaw6bDGfNgvKw'
+consumer_key: process.env.CONSUMER_KEY,
+consumer_secret: process.env.CONSUMER_SECRET,
+access_token_key: process.env.ACCESS_TOKEN_KEY,
+access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
 // Initialized connection with database
