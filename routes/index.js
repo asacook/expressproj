@@ -44,7 +44,7 @@ router.get('/', twitterQueries);
 router.post('/', function(req,res,next) {
   pName = req.body.player_input;
   tName = req.body.team_input;
-  if(req.body.radioUser == "user") {
+  if(req.body.checkUser == "user") {
     params = {q: 'from:'+ pName + " " + tName};
     search_user = true;
   }else{
