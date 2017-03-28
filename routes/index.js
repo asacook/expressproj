@@ -33,6 +33,8 @@ db.connect();
 var query = 0;
 database_only = true;
 search_user = false
+pName = ""
+tName = ""
 var params = {q: '#rooney'};
 var user_params = {q: 'from:rooney'};
 
@@ -40,8 +42,8 @@ var user_params = {q: 'from:rooney'};
 router.get('/', twitterQueries);
 
 router.post('/', function(req,res,next) {
-  var pName = req.body.player_input;
-  var tName = req.body.team_input;
+  pName = req.body.player_input;
+  tName = req.body.team_input;
   if(req.body.radioUser == "user") {
     params = {q: 'from:'+ pName + " " + tName};
     search_user = true;
@@ -59,9 +61,7 @@ router.post('/', function(req,res,next) {
 
 function twitterQueries(req, res, next) {
   client.get('search/tweets', params, getSearchTweets);
-  var pName = req.body.player_input;
-  var tName = req.body.team_input;
-
+  
   function getSearchTweets(error, tweets, response) {
     var tweet_results;
     if (!error) {
