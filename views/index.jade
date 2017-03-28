@@ -67,7 +67,7 @@ block content
               a(href="http://twitter.com/statuses/" + tweet.tweet_id) Link
 
 
-    div(style='width:600px; height:600px;')
+    div(style='width:400px; height:400px;')
       canvas#chartCanvas(width='100px', height='100px')
       script.
         var ctx = document.getElementById('chartCanvas').getContext('2d');
@@ -83,5 +83,14 @@ block content
               data: [!{chartData1}],
               backgroundColor: "rgba(153,255,51,0.4)"
             }]
+          },
+          options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
           }
         });

@@ -83,7 +83,7 @@ function twitterQueries(req, res, next) {
           }
 
          //Render Jade file with attributes.
-         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, chartData2: [2, 29, 5, 5, 2, 3, 10]});
+         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
        }
      });
     } else {
