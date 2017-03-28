@@ -59,24 +59,23 @@ router.post('/', function(req,res,next) {
 
 function twitterQueries(req, res, next) {
   client.get('search/tweets', params, getSearchTweets);
-  var param_values = params.q.split(" ")
-  var player_name = param_values[0]
-  var team_name = param_values[1]
+  var pName = req.body.player_input;
+  var tName = req.body.team_input;
 
   function getSearchTweets(error, tweets, response) {
     var tweet_results;
     if (!error) {
       if (!database_only) {
-        var queried_tweets = queryTweets(tweets, player_name, team_name);
+        var queried_tweets = queryTweets(tweets, pName, tName);
         populateDatabase(queried_tweets)
       }
 
       if (search_user) {
-        var username = player_name.split(":")[1]
+        var username = pName
         console.log(username)
-        tweet_results = getTweetsByUser(username, team_name, tweetQueryHandler);
+        tweet_results = getTweetsByUser(username, tName, tweetQueryHandler);
       } else {
-        tweet_results = getTweets(player_name, team_name, tweetQueryHandler);
+        tweet_results = getTweets(pName, tName, tweetQueryHandler);
       }
 
     } else {
