@@ -63,21 +63,27 @@ function twitterQueries(req, res, next) {
           console.log("THERE WAS AN ERROR QUERYING THE DATABASE");
         } else {
 
-          //Get all dates
-          var tweetdates = [];
+          //Create graph data
+          var graphData = {};
           for (var i = 0; i < tweet_data.length; i++) {
-            tweetdates.push(new Date(Date.parse(JSON.stringify(tweet_data[i].date))));
+            var key = new Date(Date.parse(JSON.stringify(tweet_data[i].date))).toDateString();
+            if (!(key in graphData)) {
+              graphData[key] = 1; //new date
+            } else {
+              graphData[key]++; //incremement count
+            }
           }
 
-         //Sort the list of dates to be used as chart labels
-         tweetdates.sort();
-         //Parse to strings
+          //Return Object values in an array for Chart.js
+          var values = [];
+          for(key in graphData) {
+            if(graphData.hasOwnProperty(key)) {
+              values.push(graphData[key]);
+            }
+          }
 
-         //for (var i = 0; i < tweetdates.length; i++) {
-           //tweetdates[i] = tweetdates[i].toDateString();
-         //}
-
-         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: tweetdates, chartData1: [12, 19, 3, 17, 6, 3, 7], chartData2: [2, 29, 5, 5, 2, 3, 10]});
+         //Render Jade file with attributes.
+         res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, chartData2: [2, 29, 5, 5, 2, 3, 10]});
        }
      });
     } else {
