@@ -44,16 +44,10 @@ router.get('/', twitterQueries);
 router.post('/', function(req,res,next) {
   pName = req.body.player_input;
   tName = req.body.team_input;
-  if(req.body.playerSelect == "account") {
-    console.log("account");
+  if(req.body.radioUser == "user") {
     params = {q: 'from:'+ pName + " " + tName};
     search_user = true;
-  }else if (req.body.playerSelect == "hashtag"){
-    console.log("hashtag");
-    params = {q: '#' + pName + " " + tName};
-    search_user = false;
   }else{
-    console.log("text");
     params = {q: pName + " " + tName};
     search_user = false;
   }
