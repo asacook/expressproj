@@ -8,7 +8,9 @@ var router = express.Router();
 const GET_ALL_ROWS = "SELECT * FROM football;"
 const GET_PLAYER_TEAM = "SELECT player,team,tweet_id,user,date,time,text FROM football WHERE player = ? AND team = ?;"
 const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE user = ?"
+const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE player = ? and team = ?"
 const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?);"
+
 
 var db = mysql.createConnection(
     {
@@ -35,85 +37,78 @@ database_only = true;
 search_user = false
 pName = ""
 tName = ""
-var params = {q: '#rooney'};
-var user_params = {q: 'from:rooney'};
+searchFromId = ""
+var params = {q:pName + " " + tName};
+var user_params = {q: 'from:' + pName + " " + tName};
 
-/* GET home page. */
+/*  GET home page  */
 router.get('/', twitterQueries);
 
+/*  API Call and Post Call  */
 router.post('/', function(req,res,next) {
-  pName = req.body.player_input;
-  tName = req.body.team_input;
-  if(req.body.checkUser == "user") {
-    params = {q: 'from:'+ pName + " " + tName};
-    search_user = true;
-  }else{
-    params = {q: pName + " " + tName};
-    search_user = false;
-  }
-  if(req.body.querySelector == "query_all") {
-    database_only = false;
-  } else {
-    database_only = true;
-  }
-  twitterQueries(req,res,next);
+  searchFromId = getLastId(pName, tName, function(error, searchFromId) {
+    pName = req.body.player_input;
+    tName = req.body.team_input;
+    if(req.body.checkUser == "user") {
+      params = {q: 'from:'+ pName + " " + tName, count:300, since_id:searchFromId};
+      search_user = true;
+    } else{
+      params = {q: pName + " " + tName, count:300, since_id:searchFromId};
+      search_user = false;
+    }
+
+    console.log(params);
+    // console.log(search_user);
+    if(req.body.querySelector == "query_all") {
+      database_only = false;
+    } else {
+      database_only = true;
+    }
+    twitterQueries(req,res,next);
+  });
 });
 
 function twitterQueries(req, res, next) {
-  client.get('search/tweets', params, getSearchTweets);
-  
-  function getSearchTweets(error, tweets, response) {
+  if (!database_only) {
+    client.get('search/tweets', params, showApiTweets);
+  } else {
+    showDbTweets(pName, tName)
+  }
+
+
+  function showApiTweets(error, tweets, response, callback) {
     var tweet_results;
     if (!error) {
-      if (!database_only) {
-        var queried_tweets = queryTweets(tweets, pName, tName);
-        populateDatabase(queried_tweets)
-      }
-
-      if (search_user) {
-        var username = pName
-        console.log(username)
-        tweet_results = getTweetsByUser(username, tName, tweetQueryHandler);
-      } else {
-        tweet_results = getTweets(pName, tName, tweetQueryHandler);
-      }
-
+      var queried_tweets = queryTweets(tweets, pName, tName);
+      populateDatabase(queried_tweets)
+      var graphData = getGraphData(queried_tweets)
+      var values = getGraphValues(graphData)
+      res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
     } else {
         res.status(500).json({ error: error });
     }
-  };
+  }
+
+  function showDbTweets(player, team) {
+    if (search_user) {
+      var username = pName
+      tweet_results = getTweetsByUser(username, tName, tweetQueryHandler);
+    } else {
+      tweet_results = getTweets(pName, tName, tweetQueryHandler);
+    }
+  }
 
   function tweetQueryHandler(err, tweet_data) {
     if (err) {
       console.log("THERE WAS AN ERROR QUERYING THE DATABASE");
     } else {
-
-      //Create graph data
-      var graphData = {};
-      for (var i = 0; i < tweet_data.length; i++) {
-        var key = new Date(Date.parse(JSON.stringify(tweet_data[i].date))).toDateString();
-        if (!(key in graphData)) {
-          graphData[key] = 1; //new date
-        } else {
-          graphData[key]++; //incremement count
-        }
-      }
-
-      //Return Object values in an array for Chart.js
-      var values = [];
-      for(key in graphData) {
-        if(graphData.hasOwnProperty(key)) {
-          values.push(graphData[key]);
-        }
-      }
-
+      graphData = getGraphData(tweet_data)
+      values = getGraphValues(graphData)
      //Render Jade file with attributes.
      res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
    }
   }
 };
-
-
 
 function queryTweets(tweets, player_name, team_name){
     var all_tweets = []
@@ -126,6 +121,91 @@ function queryTweets(tweets, player_name, team_name){
     }
     return all_tweets;
 };
+
+  module.exports = function(io) {
+    io.sockets.on('connection', function() {
+
+    });
+  }
+
+/*
+*   DATABASE HANDLING FUNCTIONS
+*/
+
+function populateDatabase(tweets) {
+  tweet_list = dict2Array(tweets)
+  for (var i = 0; i < tweet_list.length; i++) {
+    db.query(ADD_ITEM_TO_DB, tweet_list[i], twitterCallbacks)
+  }
+}
+
+function getTweets(player, team, callback) {
+  db.query(GET_PLAYER_TEAM, [player, team], function(error, results) {
+    var all_results = []
+    if (error) throw error;
+    for (var i = 0; i < results.length; i++) {
+      all_results.push(results[i]);
+    }
+    callback(null, all_results)
+  });
+}
+
+function getTweetsByUser(user, team, callback) {
+  db.query(GET_BY_USER, user, function(error, results) {
+    var all_results = []
+    if (error) throw error;
+    for (var i = 0; i < results.length; i++) {
+      all_results.push(results[i]);
+    }
+    callback(null, all_results)
+   });
+}
+
+function getLastId(player, team, callback) {
+  db.query(GET_LAST_ID, [player, team], function(error, result) {
+    if(error) throw error;
+    var id = result[0].tweet_id
+    console.log(result);
+    console.log(id);
+    callback(null, id)
+  });
+}
+
+function twitterCallbacks(error, result, fields) {
+  if(error){
+    throw error;
+    db.end();
+  }
+}
+
+/*
+*   HELPER FUNCTIONS
+*/
+
+function getGraphData(tweet_data) {
+  //Create graph data
+  var data = {};
+  for (var i = 0; i < tweet_data.length; i++) {
+    var key = new Date(Date.parse(JSON.stringify(tweet_data[i].date))).toDateString();
+    if (!(key in data)) {
+      data[key] = 1; //new date
+    } else {
+      data[key]++; //incremement count
+    }
+  }
+  return data;
+}
+
+function getGraphValues(data) {
+  //Return Object values in an array for Chart.js
+  var values = [];
+  for(key in data) {
+    if(data.hasOwnProperty(key)) {
+      values.push(data[key]);
+    }
+  }
+  return values;
+}
 
 function getDateAndTime(string_time) {
   var date_separator = "-"
@@ -142,69 +222,26 @@ function getDateAndTime(string_time) {
   return [date,time];
 }
 
-  module.exports = function(io) {
-    io.sockets.on('connection', function() {
-
-    });
+function dict2Array(dictionary) {
+  arrays = [];
+  for (var i = 0; i < dictionary.length; i++) {
+    var t = dictionary[i]
+    arrays.push([t.player, t.team, t.tweet_id, t.user, t.date, t.time, t.text])
   }
+  return arrays;
+}
 
-  function populateDatabase(tweets) {
-    tweet_list = dict2Array(tweets)
-    for (var i = 0; i < tweet_list.length; i++) {
-      // console.log(tweet_list[i])
-      db.query(ADD_ITEM_TO_DB, tweet_list[i], twitterCallbacks)
-    }
+function array2Dict(array) {
+  var tweet_dict = {
+    player: array[0],
+    team: array[1],
+    tweet_id: array[2],
+    user: array[3],
+    time: array[4],
+    date: array[5],
+    text: array[6]
   }
-
-  function getTweets(player, team, callback) {
-    db.query(GET_PLAYER_TEAM, [player, team], function(error, results) {
-      var all_results = []
-      if (error) throw error;
-      for (var i = 0; i < results.length; i++) {
-        all_results.push(results[i]);
-      }
-      callback(null, all_results)
-    });
-  }
-
-  function getTweetsByUser(user, team, callback) {
-    db.query(GET_BY_USER, user, function(error, results) {
-      var all_results = []
-      if (error) throw error;
-      for (var i = 0; i < results.length; i++) {
-        all_results.push(results[i]);
-      }
-      callback(null, all_results)
-     });
-  }
-
-  function twitterCallbacks(error, result, fields) {
-    if(error){
-      throw error;
-      db.end();
-    }
-  }
-
-  function dict2Array(dictionary) {
-    arrays = [];
-    for (var i = 0; i < dictionary.length; i++) {
-      var t = dictionary[i]
-      arrays.push([t.player, t.team, t.tweet_id, t.user, t.date, t.time, t.text])
-    }
-    return arrays;
-  }
-
-  function array2Dict(array) {
-    var tweet_dict = {
-      player: array[0],
-      team: array[1],
-      tweet_id: array[2],
-      user: array[3],
-      time: array[4],
-      date: array[5],
-      text: array[6]
-    }
-    return tweet_dict;
-  }
+  return tweet_dict;
+}
 
 module.exports = router;
