@@ -8,6 +8,7 @@ var router = express.Router();
 const GET_ALL_ROWS = "SELECT * FROM football;"
 const GET_PLAYER_TEAM = "SELECT player,team,tweet_id,user,date,time,text FROM football WHERE player = ? AND team = ?;"
 const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE user = ?"
+// const GET_USER_TWEETS = "SELECT user,date,time,text,tweet_id FROM football WHERE user"
 const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE player = ? and team = ?"
 const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?);"
 
@@ -37,20 +38,27 @@ database_only = true;
 search_user = false
 pName = ""
 tName = ""
+uName = ""
 searchFromId = ""
-var params = {q:pName + " " + tName};
-var user_params = {q: 'from:' + pName + " " + tName};
+var params = {};
 
 /*  GET home page  */
 router.get('/', twitterQueries);
 
 /*  API Call and Post Call  */
 router.post('/', function(req,res,next) {
+  pName = req.body.player_input;
+  tName = req.body.team_input;
+  uName = req.body.user_input;
+  var playerAndTeam;
+  if (pName) {
+
+  }
+
   searchFromId = getLastId(pName, tName, function(error, searchFromId) {
-    pName = req.body.player_input;
-    tName = req.body.team_input;
-    if(req.body.checkUser == "user") {
-      params = {q: 'from:'+ pName + " " + tName, count:300, since_id:searchFromId};
+    if(uName != "") {
+      // playerAndTeam = uName + " " + tName
+      params = {q: 'from:' + uName + " " + pName + " " + tName, count:300, since_id:searchFromId};
       search_user = true;
     } else{
       params = {q: pName + " " + tName, count:300, since_id:searchFromId};
@@ -72,7 +80,7 @@ function twitterQueries(req, res, next) {
   if (!database_only) {
     client.get('search/tweets', params, showApiTweets);
   } else {
-    showDbTweets(pName, tName)
+    showDbTweets(pName, tName, uName)
   }
 
 
@@ -89,9 +97,8 @@ function twitterQueries(req, res, next) {
     }
   }
 
-  function showDbTweets(player, team) {
+  function showDbTweets(player, team, username) {
     if (search_user) {
-      var username = pName
       tweet_results = getTweetsByUser(username, tName, tweetQueryHandler);
     } else {
       tweet_results = getTweets(pName, tName, tweetQueryHandler);
@@ -157,6 +164,7 @@ function getTweetsByUser(user, team, callback) {
     for (var i = 0; i < results.length; i++) {
       all_results.push(results[i]);
     }
+    console.log(all_results);
     callback(null, all_results)
    });
 }

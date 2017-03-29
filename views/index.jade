@@ -32,19 +32,21 @@ block content
         input.form-input(type='text', name='player_input', id='player_name')
         label.form-label(for='team_name') Team
         input.form-input(type='text', name='team_input', id='team_name')
+        label.form-label(for="user_name") User
+        input.form-input(type='text', name='user_input', id='user_name')
         button.btn.btn-success(type='submit') Search 
 
         .radio-form
           form.radio-inline
             label.radio-inline 
               input(type='radio', name='querySelector', value='query_all', checked=true) 
-              Query Online
+              Query API Only
             label.radio-inline 
               input(type='radio', name='querySelector', value='query_db') 
               Query Database Only
-            label.radio-inline
-              input(type='checkbox', name='checkUser', value='user')
-              Search Tweets by User
+            //- label.radio-inline
+            //-   input(type='checkbox', name='checkUser', value='user')
+            //-   Search Tweets by User
     
 
     table.table 
