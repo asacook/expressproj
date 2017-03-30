@@ -44,9 +44,6 @@ block content
             label.radio-inline 
               input(type='radio', name='querySelector', value='query_db') 
               Query Database Only
-            //- label.radio-inline
-            //-   input(type='checkbox', name='checkUser', value='user')
-            //-   Search Tweets by User
     
 
     table.table 
@@ -58,15 +55,21 @@ block content
           th Time
           th Link
       tbody(id="tweet-table")
-        each tweet in tweets
-          tr 
-            td
-              a(href="http://twitter.com/"+tweet.user)= tweet.user
-            td= tweet.text
-            td= tweet.date
-            td= tweet.time
-            td
-              a(href="http://twitter.com/statuses/" + tweet.tweet_id) Link
+        if tweets.length > 0 
+          each tweet in tweets
+            tr 
+              td
+                a(href="http://twitter.com/"+tweet.user)= tweet.user
+              td= tweet.text
+              td= tweet.date
+              td= tweet.time
+              td
+                a(href="http://twitter.com/statuses/" + tweet.tweet_id) Link
+        else 
+          tr
+            td(colspan="5", height="70", style="text-align:center;vertical-align:middle") No tweets have been found
+        
+          
 
 
     div(style='width:400px; height:400px;')
