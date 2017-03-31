@@ -4,7 +4,8 @@ var env = require('../ENV.js')
 
 
 var exports = module.exports = {};
-// DATABSE CONNECTION
+
+// Database Connection
 var db = mysql.createConnection(
     {
       host     : 'stusql.dcs.shef.ac.uk',
@@ -32,6 +33,12 @@ const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,d
 *   DATABASE HANDLING FUNCTIONS
 */
 
+/**
+ * Populates a database with new tweets from a returned Object containing the query results.
+ * INSERT IGNORE statement inlcluded in the string constant "ADD_ITEM_TO_DB" avoids duplicate tweets being added.
+ * @param  tweets  an Object (dictionary type structure) of tweets to be added to the database
+
+ */
 exports.populateDatabase = function(tweets) {
   tweet_list = helper.dict2Array(tweets)
   for (var i = 0; i < tweet_list.length; i++) {
@@ -39,6 +46,15 @@ exports.populateDatabase = function(tweets) {
   }
 }
 
+/**
+ * Retrives tweets from the database based on search terms
+ * Performs the AND union of the sets of results containing the player name, the team name and both.
+ *
+ * @param  player the player's name, or hashtag
+ * @param team the team name, hashtag
+ * @param callback the callback function.
+
+ */
 exports.getTweets = function(player, team, callback) {
   db.query(GET_PLAYER_TEAM, [player, team], function(error, results) {
     var all_results = []
@@ -50,6 +66,14 @@ exports.getTweets = function(player, team, callback) {
   });
 }
 
+/**
+ * Retrives tweets from the database based on entered user name
+ *
+ * @param  player the player's username
+ * @param team the team's username
+ * @param callback the callback function.
+
+ */
 exports.getTweetsByUser = function(user, team, callback) {
   db.query(GET_BY_USER, user, function(error, results) {
     var all_results = []
@@ -62,6 +86,14 @@ exports.getTweetsByUser = function(user, team, callback) {
    });
 }
 
+/**
+ * Retrives the most recent tweet from a query
+ *
+ * @param  player the player's username
+ * @param team the team's username
+ * @param callback the callback function.
+
+ */
 exports.getLastId = function(player, team, callback) {
   db.query(GET_LAST_ID, [player, team], function(error, result) {
     if(error) throw error;
@@ -72,6 +104,7 @@ exports.getLastId = function(player, team, callback) {
   });
 }
 
+//Error handling function
 twitterCallbacks = function(error, result, fields) {
   if(error){
     throw error;
