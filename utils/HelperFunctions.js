@@ -4,6 +4,15 @@
 
 var exports = module.exports = {}
 
+/**
+* Parses inputs from the forms into a the form used for a search query
+*
+* @param user an entered username
+* @param player a player name or hashtag
+* @param team a team name of hastag
+* @return the search query to be used in the API / Database
+*
+**/
 exports.createSearchParams = function(user, player, team) {
   var search_array = []
   if (user != "") {
@@ -19,6 +28,16 @@ exports.createSearchParams = function(user, player, team) {
   return search_array.join(" ")
 }
 
+
+/**
+* Creates a Javascript object out of the returned tweets
+* Key fields represent the dates to be used as labels in the graph
+* Values are the count of each tweet made on that specific dates
+*
+* @param tweet_data the JSON object of returned tweets from a query
+* @return the graph labels as an array
+*
+**/
 exports.getGraphData = function(tweet_data) {
   //Create graph data
   var data = {};
@@ -33,6 +52,13 @@ exports.getGraphData = function(tweet_data) {
   return data;
 }
 
+/**
+* Returns the graph values from the Object containing the graph data as an array.
+*
+* @param data the Key-Value pairs of tweet dates with count of tweets on that date
+* @return the counts of the tweets in an array.
+*
+**/
 exports.getGraphValues = function(data) {
   //Return Object values in an array for Chart.js
   var values = [];
@@ -44,6 +70,14 @@ exports.getGraphValues = function(data) {
   return values;
 }
 
+
+/**
+* Fetch the date and time from a date-time string
+*
+* @param string_time the string containing the date and time of a tweet
+* @return date and time parsed in a useful form as an array
+*
+**/
 exports.getDateAndTime = function(string_time) {
   var date_separator = "-"
   var comp = string_time.split(' ');
@@ -59,6 +93,15 @@ exports.getDateAndTime = function(string_time) {
   return [date,time];
 }
 
+
+/**
+* Converts a dictionary to an array
+* Used in converting the returned JSON object of search results into a list containing a list of data about a specific search result
+*
+* @param dictionary the JSON object of search results
+* @return an array containing arrays of tweet information.
+*
+**/
 exports.dict2Array = function(dictionary) {
   arrays = [];
   for (var i = 0; i < dictionary.length; i++) {
@@ -68,6 +111,14 @@ exports.dict2Array = function(dictionary) {
   return arrays;
 }
 
+/**
+* Converts an array into a "dictionary"
+* Used to convert a tweet into an Object with key-value pairs for each field of data about the tweet
+*
+* @param array an array of information about a tweet
+* @return a dictionary with key-value pairs taken from the array parameter.
+*
+**/
 exports.array2Dict = function(array) {
   var tweet_dict = {
     player: array[0],
