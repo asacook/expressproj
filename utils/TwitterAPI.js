@@ -17,6 +17,14 @@ var exports = module.exports = {}
 * TWITTER API FUNCTIONS
 */
 
+/**
+* Performs a search through the API if user intends, calls a function to query the database otherwise
+*
+* @param database_only a boolean value from the UI checkbox
+* @param params the search parameters
+* @param req,res,next the callback function
+*
+**/
 exports.twitterQueries = function(database_only, params, req, res, next) {
   if (!database_only) {
     client.get('search/tweets', params, showApiTweets);
@@ -24,7 +32,15 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
     showDbTweets(pName, tName, uName)
   }
 
-
+  /**
+  * Handles the search results from the API request.
+  * Adds new found tweets to the database as a caching process.
+  * Renders the page.
+  *
+  * @param error an error handler for the database
+  * @param tweets the results from the API request
+  *
+  **/
   function showApiTweets(error, tweets, response, callback) {
     var tweet_results;
     var message;
@@ -51,6 +67,15 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
     }
   }
 
+  /**
+  * Accesses the database to show tweets
+  * Queries by username if the user has requested to.
+  *
+  * @param player the name or hashtag of a particular player
+  * @param team the team name or hashtag
+  * @param username the username of a twitter user
+  *
+  **/
   function showDbTweets(player, team, username) {
     if (search_user) {
       tweet_results = db.getTweetsByUser(username, tName, tweetQueryHandler);
@@ -59,11 +84,19 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
     }
   }
 
+  /**
+  * Simple error handler to show a message if there are no new tweets to show
+  * Otherwise render the page as normal
+  *
+  * @param err an error handler for database connectivity.
+  * @param tweet_data the tweet search results to be rendered.
+  *
+  **/
   function tweetQueryHandler(err, tweet_data) {
     if (err) {
       console.log("THERE WAS AN ERROR QUERYING THE DATABASE");
     } else {
-      if (tweet_data.length == 0) {
+      if (tweet_data.length == 0) { //no new tweets
         res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "No new tweets found on the database. Look for tweets using the API" });
       } else {
         graphData = helper.getGraphData(tweet_data)
@@ -75,6 +108,15 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
   }
 };
 
+/**
+* Formats the search results into a form in which they can be displayed more easily
+*
+* @param tweets the search results
+* @param player the player name or hashtag
+* @param team the team name or hashtag
+* @return a JavaScript Object of search results ready for displaying on the page.
+*
+**/
 function queryTweets(tweets, player, team){
     var all_tweets = []
     var player_name = String(player).replace(/[^0-9a-z]/gi, '').toLowerCase();
