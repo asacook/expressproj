@@ -4,6 +4,7 @@ extends layout
 block content
   
   script.
+    //Socket IO connection
     $(document).ready(function() {
       var socket = io.connect('http://localhost:3000')
       
@@ -25,8 +26,10 @@ block content
   
   
   body
+    //Page body
     h1= title
     .container
+      //UI controls
       form.form-inline(role='form', action='/', method='POST')
         label.form-label(for'player_name') Player
         input.form-input(type='text', name='player_input', id='player_name')
@@ -45,7 +48,7 @@ block content
               input(type='radio', name='querySelector', value='query_db') 
               Query Database Only
     
-
+    //Results table
     table.table 
       thread
         tr 
@@ -71,7 +74,7 @@ block content
         
           
 
-
+    //Graph of frequency of tweets over time
     div(style='width:400px; height:400px;')
       canvas#chartCanvas(width='100px', height='100px')
       script.
