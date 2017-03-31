@@ -16,7 +16,7 @@ var params = {};
 
 /*  GET home page  */
 router.get('/', function(req, res) {
-  res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0 });
+  res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
 });
 
 /*  API Call and Post Call  */
@@ -24,6 +24,9 @@ router.post('/', function(req,res,next) {
   pName = req.body.player_input;
   tName = req.body.team_input;
   uName = req.body.user_input;
+  if (pName == "" && tName == "" && uName == "") {
+    res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
+  }
   searchFromId = db.getLastId(pName, tName, function(error, searchFromId) {
     search_params = helper.createSearchParams(uName, pName, tName)
     if (uName != "") {

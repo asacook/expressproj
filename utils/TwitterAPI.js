@@ -27,17 +27,25 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
 
   function showApiTweets(error, tweets, response, callback) {
     var tweet_results;
+    var message;
+    var labels;
+    var maxScale;
     if (!error) {
       var queried_tweets = queryTweets(tweets, pName, tName);
       db.populateDatabase(queried_tweets)
+      var graphData = helper.getGraphData(queried_tweets)
+      var values = helper.getGraphValues(graphData)
       if (queried_tweets.length == 0) {
-        res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0 });
+        message = "No new tweets found online. Look for existing tweets in the database"
+        labels = []
+        maxScale = 0
       }
       else {
-        var graphData = helper.getGraphData(queried_tweets)
-        var values = helper.getGraphValues(graphData)
-        res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
+        message = "success"
+        labels = JSON.stringify(Object.keys(graphData))
+        maxScale = (values[values.length-1])
       }
+      res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
     } else {
         res.status(500).json({ error: error });
     }
@@ -55,16 +63,24 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
     if (err) {
       console.log("THERE WAS AN ERROR QUERYING THE DATABASE");
     } else {
-      graphData = helper.getGraphData(tweet_data)
-      values = helper.getGraphValues(graphData)
-     //Render Jade file with attributes.
-     res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]) });
+      if (tweet_data.length == 0) {
+        res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "No new tweets found on the database. Look for tweets using the API" });
+      } else {
+        graphData = helper.getGraphData(tweet_data)
+        values = helper.getGraphValues(graphData)
+       //Render Jade file with attributes.
+       res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]), message: "success" });
+     }
    }
   }
 };
 
-function queryTweets(tweets, player_name, team_name){
+function queryTweets(tweets, player, team){
     var all_tweets = []
+    var player_name = String(player).replace(/[^0-9a-z]/gi, '').toLowerCase();
+    console.log(player_name);
+    var team_name = String(team).replace(/[^0-9a-z]/gi, '').toLowerCase();
+    console.log(team_name);
     for (var i = 0; i < tweets.statuses.length; i++) {
       var tweet = tweets.statuses[i];
       date_and_time = helper.getDateAndTime(tweet.created_at)
