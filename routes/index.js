@@ -16,11 +16,13 @@ var params = {};
 
 /*  GET home page  */
 router.get('/', function(req, res) {
-  res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
+  res.send({title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
+  // res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
 });
 
 /*  API Call and Post Call  */
 router.post('/', function(req,res,next) {
+  console.log(req)
   pName = req.body.player_input;
   tName = req.body.team_input;
   uName = req.body.user_input;

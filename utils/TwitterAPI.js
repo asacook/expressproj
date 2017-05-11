@@ -61,9 +61,12 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
         labels = JSON.stringify(Object.keys(graphData))
         maxScale = (values[values.length-1])
       }
-      res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+      // res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+
+      res.send({title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
     } else {
-        res.status(500).json({ error: error });
+        // res.status(500).json({ error: error });
+        res.send({"error":error})
     }
   }
 
