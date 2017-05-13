@@ -28,6 +28,7 @@ const GET_PLAYER_TEAM = "SELECT player,team,tweet_id,user,date,time,text FROM fo
 const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE user = ?"
 const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE player = ? and team = ?"
 const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?);"
+const GET_PLAYER_DBPAGE = "SELECT dbpedia_url FROM player_info WHERE twitter_handle = ?"
 
 /*
 *   DATABASE HANDLING FUNCTIONS
@@ -101,6 +102,16 @@ exports.getLastId = function(player, team, callback) {
     console.log(result);
     console.log(id);
     callback(null, id)
+  });
+}
+
+exports.findURLfromPlayer = function(user_input, callback) {
+  db.query(GET_PLAYER_DBPAGE, [user_input], function(err, result) {
+    if (err) {
+      callback(null, err);
+    } else {
+      callback(null, result[0].dbpedia_url);
+    }
   });
 }
 
