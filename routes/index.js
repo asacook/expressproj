@@ -28,7 +28,7 @@ router.get('/', function(req, res) {
       console.log("Error!");
     } else {
 
-      var playerURL = data;
+      var playerURL = "Wayne_Rooney";
 
       //Preamble
       const SparqlClient = require('sparql-client-2');
@@ -94,6 +94,10 @@ router.post('/', function(req,res,next) {
     }
     twitter.twitterQueries(database_only, params, req,res,next);
   });
+
+  //
+  //TODO adapt call in router.get to use uName as playerURL.
+
 });
 
 
