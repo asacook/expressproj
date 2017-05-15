@@ -60,53 +60,6 @@ router.post('/', function(req,res,next) {
     }
     twitter.twitterQueries(database_only, params, req,res,next);
   });
-
-  if (uName != "" || uName != null) {
-  //Find DBPedia URL from database based on UserName entered.
-  db.findURLfromPlayer(uName, function(err, data) {
-    if (err) {
-      console.log("Error!");
-    } else {
-
-      //Extract DBPedia information.
-      var playerURL = data;
-
-      //Preamble and interface set-up.
-      const SparqlClient = require('sparql-client-2');
-      const SPARQL = SparqlClient.SPARQL;
-      const endpoint = 'http://dbpedia.org/sparql';
-
-      //Construct SPARQL dbpedia query with desired property names.
-      var birthDateQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?birthDate FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:birthDate ?birthDate} LIMIT 10`;
-      var teamQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?currentclub FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:currentclub ?currentclub} LIMIT 10`;
-      var positionQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?position FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:position ?position} LIMIT 10`;
-
-      //Put into array for easy iterating through.
-      var qArray = [birthDateQuery, teamQuery, positionQuery];
-
-      //Register client and execute query.
-      var client = new SparqlClient(endpoint)
-         .register({dbase: 'http://dbpedia.org/resource/'})
-         .register({dbpedia: 'http://dbpedia.org/property/'});
-
-         var resultsArray = new Array();
-
-         for (var i = 0; i < qArray.length; i++) {
-           client.query(qArray[i]).execute()
-            .then(response => Promise.resolve(response.results.bindings[0])).catch(function (error) {
-                console.log("Err!");
-            });
-         }
-
-      }
-    });
-  }
 });
-
-
-function extractDBPediaInfo(uName) {
-
-}
-
 
 module.exports = router;
