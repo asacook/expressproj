@@ -61,6 +61,7 @@ router.post('/', function(req,res,next) {
     twitter.twitterQueries(database_only, params, req,res,next);
   });
 
+  if (uName != "" || uName != null) {
   //Find DBPedia URL from database based on UserName entered.
   db.findURLfromPlayer(uName, function(err, data) {
     if (err) {
@@ -92,20 +93,14 @@ router.post('/', function(req,res,next) {
 
          for (var i = 0; i < qArray.length; i++) {
            client.query(qArray[i]).execute()
-            .then(function (results) {
-                resultsArray.push(results.results.bindings[0])
-                if (i == 2) {
-                resultsArray.push(results.results.bindings[0])
-                console.log(resultsArray);
-                }
-
-              }).catch(function (error) {
+            .then(response => Promise.resolve(response.results.bindings[0])).catch(function (error) {
                 console.log("Err!");
             });
          }
 
       }
     });
+  }
 });
 
 
