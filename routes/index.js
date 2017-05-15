@@ -23,38 +23,6 @@ router.get('/', function(req, res) {
   //
   //TODO adapt for implementation into router.post
   //
-  db.findURLfromPlayer("WayneRooney", function(err, data) {
-    if (err) {
-      console.log("Error!");
-    } else {
-
-      var playerURL = "Wayne_Rooney";
-
-      //Preamble
-      const SparqlClient = require('sparql-client-2');
-      const SPARQL = SparqlClient.SPARQL;
-      const endpoint = 'http://dbpedia.org/sparql';
-
-      //Construct SPARQL dbpedia query with correct prefixes.
-      var query = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?caps FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:caps ?caps} LIMIT 10`;
-
-      //Register client and execute query.
-      var client = new SparqlClient(endpoint)
-         .register({dbase: 'http://dbpedia.org/resource/'})
-         .register({dbpedia: 'http://dbpedia.org/property/'});
-
-         client.query(query)
-           .execute()
-           .then(function (results) {
-             //Print results.
-             console.dir(results, {depth: null});
-           })
-           .catch(function (error) {
-             console.log("Error!")
-           });
-
-    }
-    });
 
   res.send({title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
 
@@ -70,7 +38,6 @@ router.get('/', function(req, res) {
 
 /*  API Call and Post Call  */
 router.post('/', function(req,res,next) {
-  console.log(req)
   pName = req.body.player_input;
   tName = req.body.team_input;
   uName = req.body.user_input;
@@ -86,7 +53,6 @@ router.post('/', function(req,res,next) {
     }
     params = {q: search_params, count:300, since_id:searchFromId};
 
-    console.log(params);
     if(req.body.querySelector == "query_all") {
       database_only = false;
     } else {
@@ -95,12 +61,57 @@ router.post('/', function(req,res,next) {
     twitter.twitterQueries(database_only, params, req,res,next);
   });
 
-  //
-  //TODO adapt call in router.get to use uName as playerURL.
+  //Find DBPedia URL from database based on UserName entered.
+  db.findURLfromPlayer(uName, function(err, data) {
+    if (err) {
+      console.log("Error!");
+    } else {
 
+      //Extract DBPedia information.
+      var playerURL = data;
+
+      //Preamble and interface set-up.
+      const SparqlClient = require('sparql-client-2');
+      const SPARQL = SparqlClient.SPARQL;
+      const endpoint = 'http://dbpedia.org/sparql';
+
+      //Construct SPARQL dbpedia query with desired property names.
+      var birthDateQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?birthDate FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:birthDate ?birthDate} LIMIT 10`;
+      var teamQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?currentclub FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:currentclub ?currentclub} LIMIT 10`;
+      var positionQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?position FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:position ?position} LIMIT 10`;
+
+      //Put into array for easy iterating through.
+      var qArray = [birthDateQuery, teamQuery, positionQuery];
+
+      //Register client and execute query.
+      var client = new SparqlClient(endpoint)
+         .register({dbase: 'http://dbpedia.org/resource/'})
+         .register({dbpedia: 'http://dbpedia.org/property/'});
+
+         var resultsArray = new Array();
+
+         for (var i = 0; i < qArray.length; i++) {
+           client.query(qArray[i]).execute()
+            .then(function (results) {
+                resultsArray.push(results.results.bindings[0])
+                if (i == 2) {
+                resultsArray.push(results.results.bindings[0])
+                console.log(resultsArray);
+                }
+
+              }).catch(function (error) {
+                console.log("Err!");
+            });
+         }
+
+      }
+    });
 });
 
 
+function extractDBPediaInfo(uName) {
+
+}
 
 
 module.exports = router;
