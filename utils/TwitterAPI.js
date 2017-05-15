@@ -2,6 +2,7 @@ var env = require('../ENV.js');
 var Twitter = require('twitter');
 var db = require('../utils/DBHelper');
 var helper = require('../utils/HelperFunctions');
+const SparqlClient = require('sparql-client-2');
 
 // Initalizes twitter client
 var client = new Twitter({
@@ -74,9 +75,7 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
             var playerURL = data;
 
             //Preamble and interface set-up.
-            const SparqlClient = require('sparql-client-2');
             const SPARQL = SparqlClient.SPARQL;
-            const endpoint = 'http://dbpedia.org/sparql';
 
             //Construct SPARQL dbpedia query with desired property names.
             var birthDateQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?birthDate FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:birthDate ?birthDate} LIMIT 10`;
@@ -86,21 +85,15 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
             //Put into array for easy iterating through.
             var qArray = [birthDateQuery, teamQuery, positionQuery];
 
-            //Register client and execute query.
-            var client = new SparqlClient(endpoint)
-               .register({dbase: 'http://dbpedia.org/resource/'})
-               .register({dbpedia: 'http://dbpedia.org/property/'});
+            /*
+            / EXTRACT INFORMATION
+            */
+            for (var i = 0; i < qArray.length; i++) {
+              scrapeDBPedia(qArray[i]);
+            }
 
-               var resultsArray = new Array();
 
-
-                 client.query(qArray[0]).execute()
-                  .then( function(results) {
-                      res.send({title: 'Search Tweets', playerInfo: results.results.bindings[0], tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
-                  }).catch(function (error) {
-                      console.log("Err!");
-                  });
-
+            //   res.send({title: 'Search Tweets', playerInfo: resultsArray, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
             }
           });
         } else {
@@ -110,6 +103,19 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
         // res.status(500).json({ error: error });
         res.send({"error":error})
     }
+  }
+
+  function scrapeDBPedia(query) {
+    var endpoint = 'http://dbpedia.org/sparql';
+    const client = new SparqlClient(endpoint)
+       .register({dbase: 'http://dbpedia.org/resource/'})
+       .register({dbpedia: 'http://dbpedia.org/property/'});
+
+        client.query(query).execute().then(function (results) {
+
+          //Should return results.results.bindings[0] instead of print
+          console.log(results.results.bindings[0])
+        });
   }
 
   /**
