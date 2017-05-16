@@ -64,19 +64,18 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
       }
       // res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
 
-      //Find DBPedia URL from database based on UserName entered.
-      if (uName != "" && uName != null) {
-        db.searchDBPedia(uName, function(err, playerInfo) {
-          if(err) {
-            res.send({error:err})
-          } else {
-            console.log(playerInfo)
-            res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
-          }
-        });
-      } else {
-          res.send({title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
-      }
+
+      db.searchDBPedia(pName, function(err, playerInfo) {
+              if(err) {
+                res.send({error:err})
+
+              } else {
+                console.log(playerInfo)
+                res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+              }
+            });
+
+
     } else {
         // res.status(500).json({ error: error });
         res.send({"error":error})

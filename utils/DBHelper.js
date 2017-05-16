@@ -30,6 +30,9 @@ const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE use
 const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE player = ? and team = ?"
 const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?);"
 const GET_PLAYER_DBPAGE = "SELECT dbpedia_url FROM player_info WHERE twitter_handle = ?"
+const GET_URL_FROM_PLAYERNAME = "SELECT dbpedia_url FROM player_info WHERE name LIKE ?"
+
+
 
 /*
 *   DATABASE HANDLING FUNCTIONS
@@ -106,8 +109,8 @@ exports.getLastId = function(player, team, callback) {
   });
 }
 
-exports.searchDBPedia = function(username, callback) {
-  findURLfromPlayer(username, function(err, query) {
+exports.searchDBPedia = function(pName, callback) {
+  findURLfromPlayer(pName, function(err, query) {
     if (err) {
       callback(err, null)
     } else {
@@ -128,6 +131,7 @@ exports.searchDBPedia = function(username, callback) {
   });
 }
 
+
 function castDBInfo(results) {
   var data = {
     bith_date: results.birthDate.value,
@@ -137,27 +141,31 @@ function castDBInfo(results) {
   return data
 }
 
-function findURLfromPlayer(user_input, callback) {
-  db.query(GET_PLAYER_DBPAGE, [user_input], function(err, result) {
-    if (err) {
-      callback(err, null);
-    } else {
-      playerURL = result[0].dbpedia_url
-      const SPARQL = SparqlClient.SPARQL;
-      var fQuery = SPARQL`
-                PREFIX dbase: <http://dbpedia.org/resource/>
-                PREFIX dbpedia: <http://dbpedia.org/property/>
-                SELECT ?birthDate ?currentclub ?position
-                WHERE {
-                  ${{dbase: playerURL}} dbpedia:birthDate ?birthDate .
-                  ${{dbase: playerURL}} dbpedia:currentclub ?currentclub .
-                  ${{dbase: playerURL}} dbpedia:position ?position
-                }
-                LIMIT 10`;
-      callback(null, fQuery);
-    }
-  });
-}
+function findURLfromPlayer(pName, callback) {
+    console.log("Got hereeeeeeeeeeee");
+    console.log(String(pName).replace(" ", '').toLowerCase())
+    db.query(GET_URL_FROM_PLAYERNAME, ['%' + String(pName).replace(" ", '').toLowerCase() + '%'], function(err, result) {
+      if (err) {
+        callback(err, null);
+      } else {
+        playerURL = result[0].dbpedia_url
+        const SPARQL = SparqlClient.SPARQL;
+        var fQuery = SPARQL`
+                  PREFIX dbase: <http://dbpedia.org/resource/>
+                  PREFIX dbpedia: <http://dbpedia.org/property/>
+                  SELECT ?birthDate ?currentclub ?position
+                  WHERE {
+                    ${{dbase: playerURL}} dbpedia:birthDate ?birthDate .
+                    ${{dbase: playerURL}} dbpedia:currentclub ?currentclub .
+                    ${{dbase: playerURL}} dbpedia:position ?position
+                  }
+                  LIMIT 10`;
+        callback(null, fQuery);
+      }
+    });
+  }
+
+
 
 
 
