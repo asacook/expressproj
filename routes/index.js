@@ -41,11 +41,13 @@ router.post('/', function(req,res,next) {
   pName = req.body.player_input;
   tName = req.body.team_input;
   uName = req.body.user_input;
+  optional1 = req.body.optional1;
+  optional2 = req.body.optional2;
   if (pName == "" && tName == "" && uName == "") {
     res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
   }
   searchFromId = db.getLastId(pName, tName, function(error, searchFromId) {
-    search_params = helper.createSearchParams(uName, pName, tName)
+    search_params = helper.createSearchParams(uName, pName, tName, optional1, optional2)
     if (uName != "") {
       search_user = true;
     } else{
