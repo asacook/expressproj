@@ -1,6 +1,7 @@
 var mysql = require('mysql');
-var helper = require('../utils/HelperFunctions')
-var env = require('../ENV.js')
+var helper = require('../utils/HelperFunctions');
+var env = require('../ENV.js');
+const SparqlClient = require('sparql-client-2');
 
 
 var exports = module.exports = {};
@@ -105,15 +106,60 @@ exports.getLastId = function(player, team, callback) {
   });
 }
 
-exports.findURLfromPlayer = function(user_input, callback) {
-  db.query(GET_PLAYER_DBPAGE, [user_input], function(err, result) {
+exports.searchDBPedia = function(username, callback) {
+  findURLfromPlayer(username, function(err, query) {
     if (err) {
-      callback(null, err);
+      callback(err, null)
     } else {
-      callback(null, result[0].dbpedia_url);
+      var endpoint = 'http://dbpedia.org/sparql';
+      const sClient = new SparqlClient(endpoint)
+         .register({dbase: 'http://dbpedia.org/resource/'})
+         .register({dbpedia: 'http://dbpedia.org/property/'});
+
+      sClient.query(query).execute()
+        .then(response => {
+          console.log(response.results.bindings[0])
+
+          var values = response.results.bindings[0]
+
+          callback(null, castDBInfo(values))
+        });
     }
   });
 }
+
+function castDBInfo(results) {
+  var data = {
+    bith_date: results.birthDate.value,
+    club: results.currentclub.value,
+    position: results.position.value
+  }
+  return data
+}
+
+function findURLfromPlayer(user_input, callback) {
+  db.query(GET_PLAYER_DBPAGE, [user_input], function(err, result) {
+    if (err) {
+      callback(err, null);
+    } else {
+      playerURL = result[0].dbpedia_url
+      const SPARQL = SparqlClient.SPARQL;
+      var fQuery = SPARQL`
+                PREFIX dbase: <http://dbpedia.org/resource/>
+                PREFIX dbpedia: <http://dbpedia.org/property/>
+                SELECT ?birthDate ?currentclub ?position
+                WHERE {
+                  ${{dbase: playerURL}} dbpedia:birthDate ?birthDate .
+                  ${{dbase: playerURL}} dbpedia:currentclub ?currentclub .
+                  ${{dbase: playerURL}} dbpedia:position ?position
+                }
+                LIMIT 10`;
+      callback(null, fQuery);
+    }
+  });
+}
+
+
 
 //Error handling function
 twitterCallbacks = function(error, result, fields) {

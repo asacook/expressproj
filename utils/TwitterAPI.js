@@ -65,58 +65,24 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
       // res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
 
       //Find DBPedia URL from database based on UserName entered.
-      if (uName != "") {
-        db.findURLfromPlayer(uName, function(err, data) {
-          if (err) {
-            console.log("Error!");
+      if (uName != "" && uName != null) {
+        db.searchDBPedia(uName, function(err, playerInfo) {
+          if(err) {
+            res.send({error:err})
           } else {
-
-            //Extract DBPedia information.
-            var playerURL = data;
-
-            //Preamble and interface set-up.
-            const SPARQL = SparqlClient.SPARQL;
-
-            //Construct SPARQL dbpedia query with desired property names.
-            var birthDateQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?birthDate FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:birthDate ?birthDate} LIMIT 10`;
-            var teamQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?currentclub FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:currentclub ?currentclub} LIMIT 10`;
-            var positionQuery = SPARQL`PREFIX dbase: <http://dbpedia.org/resource/> PREFIX dbpedia: <http://dbpedia.org/property/> SELECT ?position FROM <http://dbpedia.org> WHERE { ${{dbase: playerURL}} dbpedia:position ?position} LIMIT 10`;
-
-            //Put into array for easy iterating through.
-            var qArray = [birthDateQuery, teamQuery, positionQuery];
-
-            /*
-            / EXTRACT INFORMATION
-            */
-            for (var i = 0; i < qArray.length; i++) {
-              scrapeDBPedia(qArray[i]);
-            }
-
-
-            //   res.send({title: 'Search Tweets', playerInfo: resultsArray, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
-            }
-          });
-        } else {
-            res.send({title: 'Search Tweets', playerInfo: "", tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
-        }
+            console.log(playerInfo)
+            res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+          }
+        });
+      } else {
+          res.send({title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+      }
     } else {
         // res.status(500).json({ error: error });
         res.send({"error":error})
     }
   }
 
-  function scrapeDBPedia(query) {
-    var endpoint = 'http://dbpedia.org/sparql';
-    const client = new SparqlClient(endpoint)
-       .register({dbase: 'http://dbpedia.org/resource/'})
-       .register({dbpedia: 'http://dbpedia.org/property/'});
-
-        client.query(query).execute().then(function (results) {
-
-          //Should return results.results.bindings[0] instead of print
-          console.log(results.results.bindings[0])
-        });
-  }
 
   /**
   * Accesses the database to show tweets
