@@ -13,19 +13,41 @@ var exports = module.exports = {}
 * @return the search query to be used in the API / Database
 *
 **/
-exports.createSearchParams = function(user, player, team) {
+exports.createSearchParams = function(user, player, team, logic1, logic2) {
   var search_array = []
-  if (user != "") {
-    user_search = "from:" + uName
-    search_array.push(user_search)
-  }
+
   if (player != "") {
     search_array.push(player)
   }
+
+  if (player != "" && team != ""){
+    if (logic1 === "and") {
+      search_array.push(" AND ");
+    }else{
+      search_array.push(" OR ");
+    }
+  }
+
   if (team != "") {
     search_array.push(team)
   }
-  return search_array.join(" ")
+
+  if(team != "" && user != ""){
+    if (logic2 === "and") {
+      search_array.push(" AND ");
+    }else{
+      search_array.push(" OR ");
+    }
+  }
+
+  if (user != "") {
+    user_search = "from:" + uName
+    search_array.push(user_search);
+  }
+
+
+  console.log(search_array.join(" "));
+  return search_array.join(" ");
 }
 
 
