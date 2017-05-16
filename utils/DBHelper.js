@@ -143,7 +143,9 @@ function castDBInfo(results) {
 }
 
 function findURLfromPlayer(user_input, callback) {
-  db.query(GET_URL_FROM_PLAYERNAME, ['%' + String(pName).replace(" ", '').toLowerCase() + '%'], function(err, result) {
+  pName = String(pName).replace(/or|and/gi, '')
+  console.log("The final query: " + pName);
+  db.query(GET_URL_FROM_PLAYERNAME, ['%' + String(pName).replace(/ /g, '').toLowerCase() + '%'], function(err, result) {
     if (err) {
       callback(err, null);
     } else {
