@@ -169,11 +169,6 @@ function findURLfromPlayer(user_input, callback) {
     }
   });
 }
-//  ?birthPlace ?comment
-//
-//
-// ${{dbase: playerURL}} dbpedia:comment ?comment
->>>>>>> Stashed changes
 
 //Error handling function
 twitterCallbacks = function(error, result, fields) {
