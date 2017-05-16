@@ -22,9 +22,9 @@ exports.createSearchParams = function(user, player, team, logic1, logic2) {
 
   if (player != "" && team != ""){
     if (logic1 === "and") {
-      search_array.push(" AND ");
+      search_array.push("AND");
     }else{
-      search_array.push(" OR ");
+      search_array.push("OR");
     }
   }
 
@@ -34,9 +34,9 @@ exports.createSearchParams = function(user, player, team, logic1, logic2) {
 
   if(team != "" && user != ""){
     if (logic2 === "and") {
-      search_array.push(" AND ");
+      search_array.push("AND");
     }else{
-      search_array.push(" OR ");
+      search_array.push("OR");
     }
   }
 
