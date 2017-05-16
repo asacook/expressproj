@@ -117,14 +117,12 @@ exports.searchDBPedia = function(pName, callback) {
       var endpoint = 'http://dbpedia.org/sparql';
       const sClient = new SparqlClient(endpoint)
          .register({dbase: 'http://dbpedia.org/resource/'})
-         .register({dbpedia: 'http://dbpedia.org/property/'});
+         .register({dbpedia: 'http://dbpedia.org/property/'})
+         .register({rdfs: 'http://www.w3.org/2000/01/rdf-schema#'});
 
       sClient.query(query).execute()
         .then(response => {
-          console.log(response.results.bindings[0])
-
           var values = response.results.bindings[0]
-
           callback(null, castDBInfo(values))
         });
     }
@@ -134,40 +132,48 @@ exports.searchDBPedia = function(pName, callback) {
 
 function castDBInfo(results) {
   var data = {
-    bith_date: results.birthDate.value,
-    club: results.currentclub.value,
-    position: results.position.value
+    name: results.label.value,
+    birth_place: helper.extractValue(results.birthPlace.value),
+    birth_date: results.birthDate.value,
+    club: helper.extractValue(results.currentclub.value.replace("_", " ")),
+    position: helper.extractValue(results.position.value).split(" ")[0],
+    description: results.comment.value
   }
   return data
 }
 
-function findURLfromPlayer(pName, callback) {
-    console.log("Got hereeeeeeeeeeee");
-    console.log(String(pName).replace(" ", '').toLowerCase())
-    db.query(GET_URL_FROM_PLAYERNAME, ['%' + String(pName).replace(" ", '').toLowerCase() + '%'], function(err, result) {
-      if (err) {
-        callback(err, null);
-      } else {
-        playerURL = result[0].dbpedia_url
-        const SPARQL = SparqlClient.SPARQL;
-        var fQuery = SPARQL`
-                  PREFIX dbase: <http://dbpedia.org/resource/>
-                  PREFIX dbpedia: <http://dbpedia.org/property/>
-                  SELECT ?birthDate ?currentclub ?position
-                  WHERE {
-                    ${{dbase: playerURL}} dbpedia:birthDate ?birthDate .
-                    ${{dbase: playerURL}} dbpedia:currentclub ?currentclub .
-                    ${{dbase: playerURL}} dbpedia:position ?position
-                  }
-                  LIMIT 10`;
-        callback(null, fQuery);
-      }
-    });
-  }
-
-
-
-
+function findURLfromPlayer(user_input, callback) {
+  db.query(GET_URL_FROM_PLAYERNAME, ['%' + String(pName).replace(" ", '').toLowerCase() + '%'], function(err, result) {
+    if (err) {
+      callback(err, null);
+    } else {
+      playerURL = result[0].dbpedia_url
+      const SPARQL = SparqlClient.SPARQL;
+      var fQuery = SPARQL`
+                PREFIX dbase: <http://dbpedia.org/resource/>
+                PREFIX dbpedia: <http://dbpedia.org/property/>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                SELECT ?label ?birthPlace ?birthDate ?currentclub ?position ?comment
+                WHERE {
+                  ${{dbase: playerURL}} rdfs:label ?label .
+                  ${{dbase: playerURL}} dbpedia:birthPlace ?birthPlace .
+                  ${{dbase: playerURL}} dbpedia:birthDate ?birthDate .
+                  ${{dbase: playerURL}} dbpedia:currentclub ?currentclub .
+                  ${{dbase: playerURL}} dbpedia:position ?position .
+                  ${{dbase: playerURL}} rdfs:comment ?comment .
+                  filter(langMatches(lang(?label),"EN")) .
+                  filter(langMatches(lang(?comment),"EN"))
+                }
+                LIMIT 10`;
+      callback(null, fQuery);
+    }
+  });
+}
+//  ?birthPlace ?comment
+//
+//
+// ${{dbase: playerURL}} dbpedia:comment ?comment
+>>>>>>> Stashed changes
 
 //Error handling function
 twitterCallbacks = function(error, result, fields) {

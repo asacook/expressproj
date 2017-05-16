@@ -153,3 +153,9 @@ exports.array2Dict = function(array) {
   }
   return tweet_dict;
 }
+
+exports.extractValue = function (url_value) {
+  var item_val = url_value.split("/")
+  var value = item_val[item_val.length-1]
+  return value.replace("_", " ")
+}
