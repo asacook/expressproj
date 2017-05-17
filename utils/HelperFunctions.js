@@ -17,7 +17,7 @@ exports.createSearchParams = function(user, player, team, logic1, logic2) {
   var search_array = []
 
   if (player != "") {
-    search_array.push(player)
+    search_array.push(player.toLowerCase())
   }
 
   if (player != "" && team != ""){
@@ -29,7 +29,7 @@ exports.createSearchParams = function(user, player, team, logic1, logic2) {
   }
 
   if (team != "") {
-    search_array.push(team)
+    search_array.push(team.toLowerCase())
   }
 
   if(team != "" && user != ""){
@@ -42,7 +42,7 @@ exports.createSearchParams = function(user, player, team, logic1, logic2) {
 
   if (user != "") {
     user_search = "from:" + uName
-    search_array.push(user_search);
+    search_array.push(user_search.toLowerCase());
   }
 
 
