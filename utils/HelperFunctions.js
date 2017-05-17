@@ -128,7 +128,7 @@ exports.dict2Array = function(dictionary) {
   arrays = [];
   for (var i = 0; i < dictionary.length; i++) {
     var t = dictionary[i]
-    arrays.push([t.player, t.team, t.tweet_id, t.user, t.date, t.time, t.text])
+    arrays.push([t.query, t.player, t.team, t.tweet_id, t.user, t.date, t.time, t.text])
   }
   return arrays;
 }
@@ -143,13 +143,14 @@ exports.dict2Array = function(dictionary) {
 **/
 exports.array2Dict = function(array) {
   var tweet_dict = {
-    player: array[0],
-    team: array[1],
-    tweet_id: array[2],
-    user: array[3],
-    time: array[4],
-    date: array[5],
-    text: array[6]
+    query: array[0],
+    player: array[1],
+    team: array[2],
+    tweet_id: array[3],
+    user: array[4],
+    time: array[5],
+    date: array[6],
+    text: array[7]
   }
   return tweet_dict;
 }
