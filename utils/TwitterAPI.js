@@ -2,7 +2,7 @@ var env = require('../ENV.js');
 var Twitter = require('twitter');
 var db = require('../utils/DBHelper');
 var helper = require('../utils/HelperFunctions');
-const SparqlClient = require('sparql-client-2');
+var dbpedia = require('../utils/DBPedia');
 
 // Initalizes twitter client
 var client = new Twitter({
@@ -28,6 +28,7 @@ var exports = module.exports = {}
 **/
 exports.twitterQueries = function(database_only, params, req, res, next) {
   if (!database_only) {
+    console.log(params)
     client.get('search/tweets', params, showApiTweets);
   } else {
     showDbTweets(pName, tName, uName)
@@ -65,13 +66,18 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
       // res.status(200).render('index', {title: 'Search Tweets', tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
 
 
-      db.searchDBPedia(pName, function(err, playerInfo) {
+      dbpedia.searchDBPedia(pName, function(err, playerInfo) {
               if(err) {
                 res.send({error:err})
-
               } else {
-                console.log(playerInfo)
-                res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+                if(playerInfo) {
+                  console.log(playerInfo)
+                  res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+                } else {
+                  console.log(playerInfo)
+                  res.send({title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+                }
+
               }
             });
 
