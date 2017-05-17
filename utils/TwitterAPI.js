@@ -72,10 +72,11 @@ exports.twitterQueries = function(database_only, params, req, res, next) {
               } else {
                 if(playerInfo) {
                   console.log(playerInfo)
-                  res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+                  res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: graphData, maxScale: maxScale, message: message });
                 } else {
                   console.log(playerInfo)
-                  res.send({title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+                  console.log(graphData)
+                  res.send({title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: graphData, maxScale: maxScale, message: message });
                 }
 
               }
