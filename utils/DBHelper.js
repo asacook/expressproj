@@ -24,8 +24,8 @@ db.connect();
 const GET_ALL_ROWS = "SELECT * FROM football;"
 const GET_PLAYER_TEAM = "SELECT player,team,tweet_id,user,date,time,text FROM football WHERE player = ? AND team = ?;"
 const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE user = ?"
-const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE player = ? and team = ?"
-const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?);"
+const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE query = ?"
+const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (query,player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?,?);"
 const GET_PLAYER_DBPAGE = "SELECT dbpedia_url FROM player_info WHERE twitter_handle = ?"
 const GET_URL_FROM_PLAYERNAME = "SELECT dbpedia_url FROM player_info WHERE name LIKE ?"
 
@@ -99,8 +99,8 @@ exports.getTweetsByUser = function(user, team, callback) {
  * @param callback the callback function.
 
  */
-exports.getLastId = function(player, team, callback) {
-  db.query(GET_LAST_ID, [player, team], function(error, result) {
+exports.getLastId = function(query, callback) {
+  db.query(GET_LAST_ID, [query], function(error, result) {
     if(error) throw error;
     var id = result[0].tweet_id
     console.log(id);

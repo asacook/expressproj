@@ -46,8 +46,8 @@ router.post('/', function(req,res,next) {
   if (pName == "" && tName == "" && uName == "") {
     res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
   }
-  searchFromId = db.getLastId(pName, tName, function(error, searchFromId) {
-    search_params = helper.createSearchParams(uName, pName, tName, optional1, optional2)
+  search_params = helper.createSearchParams(uName, pName, tName, optional1, optional2)
+  searchFromId = db.getLastId(search_params, function(error, searchFromId) {
     if (uName != "") {
       search_user = true;
     } else{
@@ -60,7 +60,7 @@ router.post('/', function(req,res,next) {
     } else {
       database_only = true;
     }
-    twitter.twitterQueries(database_only, params, req,res,next);
+    twitter.twitterQueries(database_only, search_params, params, req,res,next);
   });
 });
 
