@@ -73,7 +73,9 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
             res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
           } else {
             // console.log(playerInfo)
-            res.send({title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
+            var rest_params = {title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message }
+            console.log(Object.prototype.toString(rest_params))
+            res.send(rest_params);
           }
         }
       });

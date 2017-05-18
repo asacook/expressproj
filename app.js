@@ -10,6 +10,7 @@ var http = require('http');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var about = require('./routes/about');
+var api = require('./routes/api')
 
 var app = express();
 
@@ -38,6 +39,7 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', index);
+app.use('/api', api)
 app.use('/users', users);
 app.use('/about', about);
 

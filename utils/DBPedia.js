@@ -44,7 +44,7 @@ function findURLfromPlayer(user_input, callback) {
     query_url = db.GET_URL_FROM_PLAYERNAME;
     parameter = ['%' + String(input_values.name).toLowerCase() + '%'];
   }
-  
+
   db.db_client.query(query_url, parameter, function(err, result) {
     if (err) {
       console.
@@ -100,11 +100,13 @@ function extract_params(search_params) {
       "name": type[0].replace('@','')
     };
   } else {
-    var player_name = search_params.filter((x) => {return !(x.includes('#')) || !(x.includes('@'))});
+    var player_name = search_params.filter((x) => {return !(x.includes('#')) && !(x.includes('@'))});
+    console.log(player_name)
     params = {
       "is_user": false,
       "name": player_name.join("")
     };
+    console.log(params.name)
   }
   return params;
 }
