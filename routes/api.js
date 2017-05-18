@@ -44,6 +44,8 @@ router.post('/', function(req,res,next) {
   uName = req.body.user_input;
   optional1 = req.body.optional1;
   optional2 = req.body.optional2;
+  console.log(optional1)
+  console.log(optional1)
   if (pName == "" && tName == "" && uName == "") {
     res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
   }
