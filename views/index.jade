@@ -30,14 +30,31 @@ block content
     h1= title
     .container
       //UI controls
-      form.form-inline(role='form', action='/', method='POST')
-        label.form-label(for='player_name') Player
-        input.form-input(type='text', name='player_input', id='player_name')
-        label.form-label(for='team_name') Team
-        input.form-input(type='text', name='team_input', id='team_name')
-        label.form-label(for="user_name") User
-        input.form-input(type='text', name='user_input', id='user_name')
-        button.btn.btn-success(type='submit') Search 
+      form.form-group(role='form', action='/', method='POST')
+        .row
+          label.col-sm-4.col-form-label(for='player_name') Player        
+          .col-sm-4
+            input.form-control(type='text', name='player_input', id='player_name')
+          .col-sm-4
+            select(name='logic1', id="logic1")
+              option(value='AND') AND
+              |    
+              option(value='OR') OR
+        .row
+          label.col-sm-4.col-form-label(for='team_name') Team
+          .col-sm-4
+            input.form-control(type='text', name='team_input', id='team_name')
+          .col-sm-4
+            select(name='logic2', id="logic2")
+              option(value='AND') AND
+              |    
+              option(value='OR') OR
+        .row
+          label.col-sm-4.col-form-label(for="user_name") User
+          .col-sm-4
+            input.form-control(type='text', name='user_input', id='user_name')
+         button.btn.btn-success(type='submit') Search 
+
 
         .radio-form
           form.radio-inline
