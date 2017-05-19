@@ -65,6 +65,27 @@ block content
               input(type='radio', name='querySelector', value='query_db') 
               Query Database Only
     
+    //Player info table
+    if (player_info.hasOwnProperty('name') )
+      table.table
+        thread
+          tr
+            th Name
+            th Birth Place
+            th Birth Date
+            th Club
+            th Position
+            th Description
+        tbody(id="info-table")
+            tr
+              td= player_info.name
+              td= player_info.birth_place
+              td= player_info.birth_date
+              td= player_info.club
+              td= player_info.position
+              td= player_info.description
+            
+            
     //Results table
     table.table 
       thread

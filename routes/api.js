@@ -19,21 +19,7 @@ var params = {};
 
 /*  GET home page  */
 router.get('/', function(req, res) {
-
-  //
-  //TODO adapt for implementation into router.post
-  //
-
-  res.send({title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
-
-  // console.log("Query to " + endpoint);
-  // console.log("Query: " + query);
-  // client.query(query)
-  //   .bind('player', '<http://dbpedia.org/page/Wayne_Rooney>')
-  //   .execute(function(error, results) {
-  //     process.stdout.write(util.inspect(arguments, null, 20, true)+"\n");1
-  //   });
-  // res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" });
+  res.send({title: 'Search Tweets', tweets: [], player_info: {}, labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
 });
 
 /*  API Call and Post Call  */

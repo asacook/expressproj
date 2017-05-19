@@ -20,7 +20,7 @@ var params = {};
 
 /*  GET home page  */
 router.get('/', function(req, res) {
-  res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
+  res.status(200).render('index', {title: 'Search Tweets', tweets: [], player_info: {}, labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
 });
 
 /*  API Call and Post Call  */

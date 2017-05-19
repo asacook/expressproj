@@ -47,7 +47,6 @@ function findURLfromPlayer(user_input, callback) {
 
   db.db_client.query(query_url, parameter, function(err, result) {
     if (err) {
-      console.
       callback(err, null);
     } else {
       console.log("PLAYER SEARCH RESULT: ");

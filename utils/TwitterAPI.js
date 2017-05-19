@@ -69,10 +69,10 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
           res.send({error:err})
         } else {
           if(playerInfo) {
-            // console.log(playerInfo)
+            console.log(playerInfo)
             res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
           } else {
-            // console.log(playerInfo)
+            console.log(playerInfo)
             var rest_params = {title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message }
             console.log(Object.prototype.toString(rest_params))
             res.send(rest_params);
@@ -135,10 +135,10 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
           }
 
           if(playerInfo) {
-            // console.log(playerInfo)
+            console.log(playerInfo)
             res.send({title: 'Search Tweets', player_info: playerInfo, tweets: tweet_data, labels: labels, chartData1: values, maxScale: maxScale, message: message });
           } else {
-            // console.log(playerInfo)
+            console.log(playerInfo)
             res.send({title: 'Search Tweets', player_info: {}, tweets: tweet_data, labels: labels, chartData1: values, maxScale: maxScale, message: message });
           }
         }
