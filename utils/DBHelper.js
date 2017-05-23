@@ -51,6 +51,17 @@ exports.populateDatabase = function(tweets) {
   }
 }
 
+exports.getAllTweets = function(callback) {
+  db.query(GET_ALL_ROWS, [], function(error, results) {
+    var all_results = []
+    if (error) throw error;
+    for (var i = 0; i < results.length; i++) {
+      all_results.push(results[i]);
+    }
+    callback(null, all_results)
+  })
+}
+
 /**
  * Retrives tweets from the database based on search terms
  * Performs the AND union of the sets of results containing the player name, the team name and both.
