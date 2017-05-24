@@ -6,6 +6,7 @@ var helper = require('../utils/HelperFunctions')
 var twitter = require('../utils/TwitterAPI')
 var request = require('request')
 
+//Initialise variables
 main_url = "http://localhost:3000"
 var query = 0;
 database_only = true;
@@ -25,6 +26,7 @@ router.get('/', function(req, res) {
 
 /*  API Call and Post Call  */
 router.post('/', function(req,res,next) {
+  //API handles GET and POST so make JSON request to it.
   request.post("http://localhost:3000/api", {form:req.body}, function(request, response, other) {
     json_res = JSON.parse(response.body)
     res.status(200).render('index', json_res);

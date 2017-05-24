@@ -6,6 +6,14 @@ const SparqlClient = require('sparql-client-2');
 
 var exports = module.exports = {};
 
+/**
+* Main search function, callable from other classes.
+*
+* @param pName the user entered player name
+* @param callback standard callback function construct
+* @return data an object containing all the relevant player information
+*
+**/
 exports.searchDBPedia = function(pName, callback) {
   findURLfromPlayer(pName, function(err, query) {
     if (err) {
@@ -32,17 +40,31 @@ exports.searchDBPedia = function(pName, callback) {
   });
 }
 
+/**
+* Find the DBPedia URL in the database based on the player name input.
+* Called by the main search function searchDBPedia.
+*
+* @param user_input the user entered player name
+* @param callback standard callback function construct
+* @return fQuery the final SPARQL query properly set up, ready to be executed.
+*
+**/
 function findURLfromPlayer(user_input, callback) {
+
   var query_url;
   var parameter;
+
+  //Remove logical connectives
   pName = String(user_input).replace(/or|and/gi, '')
+
+  //Execute appropriate query based on if user entered just a name or a real username
   var input_values = extract_params(pName.split(" "));
   if (input_values.is_user) {
     query_url = db.GET_PLAYER_DBPAGE;
     parameter = [input_values.name]
   } else {
     query_url = db.GET_URL_FROM_PLAYERNAME;
-    parameter = ['%' + String(input_values.name).toLowerCase() + '%'];
+    parameter = ['%' + String(input_values.name).toLowerCase() + '%']; //% is a LIKE operator that represents zero, one, or multiple characters.
   }
 
   db.db_client.query(query_url, parameter, function(err, result) {
@@ -78,6 +100,13 @@ function findURLfromPlayer(user_input, callback) {
   });
 }
 
+/**
+* Returns the query results in a usable form (Javascript object)
+*
+* @param results the JSON response from DBPedia
+* @return data the Javascript object containing all the relevant information
+*
+**/
 function castDBInfo(results) {
   var data = {
     name: results.label.value,
@@ -90,6 +119,13 @@ function castDBInfo(results) {
   return data
 }
 
+/**
+* Adjusts parameters based on if the user entered a username or just a name of a player
+*
+* @param search_params the parameters previously used for searching.
+* @return params the params containing information ready for extracting DBPedia URL.
+*
+**/
 function extract_params(search_params) {
   var params;
   var type = search_params.filter((x) => {return x.includes("@")});

@@ -81,7 +81,6 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
       });
 
     } else {
-        // res.status(500).json({ error: error });
         res.send({"error":error})
     }
   }
@@ -143,15 +142,6 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
           }
         }
       });
-
-    //   if (tweet_data.length == 0) { //no new tweets
-    //     res.status(200).render('index', {title: 'Search Tweets', tweets: [], labels: [], chartData1: [], maxScale: 0, message: "No new tweets found on the database. Look for tweets using the API" });
-    //   } else {
-        // graphData = helper.getGraphData(tweet_data)
-        // values = helper.getGraphValues(graphData)
-    //    //Render Jade file with attributes.
-    //    res.status(200).render('index', {title: 'Search Tweets', tweets: tweet_data, labels: JSON.stringify(Object.keys(graphData)), chartData1: values, maxScale: (values[values.length-1]), message: "success" });
-    //  }
    }
   }
 };
@@ -168,9 +158,8 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
 function queryTweets(tweets, player, team, query_params){
     var all_tweets = []
     var player_name = String(player).replace(/[^0-9a-z]/gi, '').toLowerCase();
-    // console.log(player_name);
     var team_name = String(team).replace(/[^0-9a-z]/gi, '').toLowerCase();
-    // console.log(team_name);
+
     for (var i = 0; i < tweets.statuses.length; i++) {
       var tweet = tweets.statuses[i];
       date_and_time = helper.getDateAndTime(tweet.created_at)
