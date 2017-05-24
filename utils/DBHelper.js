@@ -25,7 +25,7 @@ const GET_ALL_ROWS = "SELECT * FROM football;"
 const GET_PLAYER_TEAM = "SELECT player,team,tweet_id,user,date,time,text FROM football WHERE player = ? AND team = ?;"
 const GET_BY_USER = "SELECT user,date,time,text,tweet_id FROM football WHERE user = ?"
 const GET_LAST_ID = "SELECT MAX(tweet_id) AS tweet_id FROM football WHERE query = ?"
-const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (query,player,team,tweet_id,user,date,time,text) VALUES (?,?,?,?,?,?,?,?);"
+const ADD_ITEM_TO_DB = "INSERT IGNORE INTO football (query,player,team,tweet_id,user,date,time,text,retweet_count,favorite_count) VALUES (?,?,?,?,?,?,?,?,?,?);"
 const GET_PLAYER_DBPAGE = "SELECT dbpedia_url FROM player_info WHERE twitter_handle = ?"
 const GET_URL_FROM_PLAYERNAME = "SELECT dbpedia_url FROM player_info WHERE name LIKE ?"
 

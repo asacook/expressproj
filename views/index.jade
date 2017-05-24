@@ -95,6 +95,8 @@ block content
           th Date
           th Time
           th Link
+          th RT
+          th FV
       tbody(id="tweet-table")
         if tweets.length > 0 
           each tweet in tweets
@@ -106,6 +108,8 @@ block content
               td= tweet.time
               td
                 a(href="http://twitter.com/statuses/" + tweet.tweet_id) Link
+              td= tweet.retweet_count
+              td=tweet.favorite_count
         else 
           tr
             td(colspan="5", height="70", style="text-align:center;vertical-align:middle")=message

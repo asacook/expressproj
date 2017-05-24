@@ -69,10 +69,8 @@ exports.twitterQueries = function(database_only, search_query, params, req, res,
           res.send({error:err})
         } else {
           if(playerInfo) {
-            console.log(playerInfo)
             res.send({title: 'Search Tweets', player_info: playerInfo, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message });
           } else {
-            console.log(playerInfo)
             var rest_params = {title: 'Search Tweets', player_info: {}, tweets: queried_tweets, labels: labels, chartData1: values, maxScale: maxScale, message: message }
             console.log(Object.prototype.toString(rest_params))
             res.send(rest_params);
@@ -164,7 +162,7 @@ function queryTweets(tweets, player, team, query_params){
       var tweet = tweets.statuses[i];
       date_and_time = helper.getDateAndTime(tweet.created_at)
       tweet_dict = helper.array2Dict([query_params, player_name, team_name, tweet.id_str,
-                  tweet.user.screen_name, date_and_time[1], date_and_time[0], tweet.text])
+                  tweet.user.screen_name, date_and_time[1], date_and_time[0], tweet.text, tweet.retweet_count, tweet.favorite_count])
       all_tweets.push(tweet_dict)
     }
     return all_tweets;
