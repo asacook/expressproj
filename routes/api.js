@@ -30,6 +30,12 @@ router.get('/', function(req, res) {
   res.send({title: 'Search Tweets', tweets: [], player_info: {}, labels: [], chartData1: [], maxScale: 0, message: "Please enter a query" })
 });
 
+router.get('/all', function(req, res) {
+  db.getAllTweets(function(error, data) {
+    res.send({tweets: data})
+  })
+})
+
 /*  API Call and Post Call  */
 router.post('/', function(req,res,next) {
 
